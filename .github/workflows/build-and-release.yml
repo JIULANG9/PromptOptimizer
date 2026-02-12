@@ -1,0 +1,348 @@
+name: Build & Release Prompt Optimizer
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.png'
+      - '**/*.jpg'
+      - 'LICENSE'
+      - '.gitignore'
+
+env:
+  FLUTTER_VERSION: '3.24.0'
+  JAVA_VERSION: '17'
+
+jobs:
+  # 代码质量检查和测试（仅对分支推送和PR运行）
+  test:
+    name: Code Quality & Tests
+    runs-on: ubuntu-latest
+    if: "!startsWith(github.ref, 'refs/tags/')"
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Generate files (Drift database)
+        run: dart run build_runner build --delete-conflicting-outputs
+        
+      - name: Check code formatting
+        run: dart format --set-exit-if-changed .
+        
+      - name: Analyze code
+        run: flutter analyze
+        
+      - name: Run tests
+        run: flutter test
+
+  # Android 构建
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Generate files (Drift database)
+        run: dart run build_runner build --delete-conflicting-outputs
+        
+      # 配置 Android 签名（仅在正式发布时）
+      - name: Setup Android signing (Release only)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          mkdir -p android/app/sign
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/sign/prompt_optimization.jks
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        
+      # 构建不同类型的包
+      - name: Build APK (Debug for branches, Release for tags)
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            # 正式发布版本
+            flutter build apk --release --target-platform=android-arm64,android-x64
+            flutter build appbundle --release
+          else
+            # 测试版本
+            flutter build apk --debug
+          fi
+          
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: |
+            build/app/outputs/flutter-apk/app-*.apk
+          retention-days: 30
+          
+      - name: Upload AAB Artifact (Release only)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: build/app/outputs/bundle/release/app-*.aab
+          retention-days: 30
+
+  # Windows 构建
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Generate files (Drift database)
+        run: dart run build_runner build --delete-conflicting-outputs
+        
+      - name: Build Windows
+        run: flutter build windows --release
+        
+      - name: Package Windows
+        run: |
+          cd build\windows\x64\runner\Release
+          Compress-Archive -Path * -DestinationPath ..\..\..\..\prompt-optimizer-windows.zip
+          
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-app
+          path: prompt-optimizer-windows.zip
+          retention-days: 30
+
+  # Linux 构建
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+          
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Generate files (Drift database)
+        run: dart run build_runner build --delete-conflicting-outputs
+        
+      - name: Build Linux
+        run: flutter build linux --release
+        
+      - name: Package Linux
+        run: |
+          cd build/linux/x64/release/bundle
+          tar -czvf ../../../../prompt-optimizer-linux.tar.gz *
+          
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-app
+          path: prompt-optimizer-linux.tar.gz
+          retention-days: 30
+
+  # macOS 构建
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Generate files (Drift database)
+        run: dart run build_runner build --delete-conflicting-outputs
+        
+      - name: Build macOS
+        run: flutter build macos --release
+        
+      - name: Package macOS
+        run: |
+          cd build/macos/Build/Products/Release
+          zip -r ../../../../prompt-optimizer-macos.zip Prompt\ Optimizer.app
+          
+      - name: Upload macOS Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-app
+          path: prompt-optimizer-macos.zip
+          retention-days: 30
+
+  # Web 构建
+  build-web:
+    name: Build Web
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Generate files (Drift database)
+        run: dart run build_runner build --delete-conflicting-outputs
+        
+      - name: Build Web
+        run: flutter build web --release
+        
+      - name: Package Web
+        run: |
+          cd build/web
+          tar -czvf ../../prompt-optimizer-web.tar.gz *
+          
+      - name: Upload Web Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-app
+          path: prompt-optimizer-web.tar.gz
+          retention-days: 30
+
+  # 创建 GitHub Release（仅在 Tag 推送时）
+  release:
+    name: Create GitHub Release
+    needs: [build-android, build-windows, build-linux, build-macos, build-web]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          
+      - name: Prepare Release Files
+        run: |
+          mkdir release_files
+          
+          # Android
+          cp artifacts/android-apk/app-*.apk release_files/prompt-optimizer-android.apk || true
+          cp artifacts/android-aab/app-*.aab release_files/prompt-optimizer-android.aab || true
+          
+          # Desktop
+          cp artifacts/windows-app/prompt-optimizer-windows.zip release_files/ || true
+          cp artifacts/macos-app/prompt-optimizer-macos.zip release_files/ || true
+          cp artifacts/linux-app/prompt-optimizer-linux.tar.gz release_files/ || true
+          
+          # Web
+          cp artifacts/web-app/prompt-optimizer-web.tar.gz release_files/ || true
+          
+          # 列出所有文件
+          ls -la release_files/
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Prompt Optimizer ${{ github.ref_name }}
+          body: |
+            ## 🚀 Prompt Optimizer ${{ github.ref_name }}
+            
+            ### 📱 下载说明
+            - **Android APK**: 直接安装的安卓应用包
+            - **Android AAB**: Google Play 发布包（推荐用于商店发布）
+            - **Windows**: Windows 桌面应用（解压即用）
+            - **macOS**: macOS 应用（拖拽到 Applications 文件夹）
+            - **Linux**: Linux 应用（解压后运行可执行文件）
+            - **Web**: Web 应用（可部署到任何 Web 服务器）
+            
+            ### ✨ 新特性
+            请查看 [CHANGELOG.md](https://github.com/JIULANG9/PromptOptimizer/blob/main/CHANGELOG.md) 了解详细更新内容。
+            
+            ### 🔧 系统要求
+            - Android 5.0+ (API 21+)
+            - Windows 10+ (x64)
+            - macOS 10.14+ (x64)
+            - Linux (GLIBC 2.17+)
+            - 现代浏览器（支持 WebAssembly）
+            
+            ### 📄 许可证
+            本项目采用 MIT 许可证，详见 [LICENSE](https://github.com/JIULANG9/PromptOptimizer/blob/main/LICENSE) 文件。
+          files: release_files/*
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

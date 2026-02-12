@@ -127,41 +127,56 @@ dart format .
 | `/settings/api-configs/:id/edit` | 编辑 API 配置 |
 | `/settings/templates` | 模板列表 |
 | `/settings/templates/new` | 新增模板 |
-| `/settings/templates/:id/edit` | 编辑模板 |
-| `/history` | 历史记录列表 |
-| `/history/:id` | 历史记录详情 |
-
 ## CI/CD：GitHub Actions
 
-项目采用「两套工作流」协同保障质量与发布：
+项目采用现代化的 GitHub Actions 工作流进行自动化构建、测试和发布。
 
-1. **`.github/workflows/flutter-ci.yml` — Flutter CI**  
-   - 触发：`main` 分支的 push / PR。  
-   - Runner：`ubuntu-latest`。  
-   - 步骤：`flutter pub get` → `dart format --set-exit-if-changed` → `flutter analyze` → `flutter test`。  
-   - 作用：作为合并门禁，确保提交在进入主干前即通过格式、静态分析与单测校验。
+### 工作流文件
+- **`.github/workflows/build-and-release.yml`** — 主要构建和发布工作流
 
-2. **`.github/workflows/release.yml` — Flutter Release Build**  
-   - 触发：命名为 `v*` 的 Tag push 或手动 **workflow_dispatch**。  
-   - Job & 产物：
+### 触发条件
+| 触发方式 | 行为 | 产物 |
+|---------|------|------|
+| `main` 分支推送 | 代码质量检查 + Debug 构建 | 临时产物（30天） |
+| Git Tag (`v*`) | 完整构建 + 自动发布 | 永久 Release |
+| Pull Request | 代码质量检查 | 无产物 |
 
-   | Job | Runner | 关键步骤 | Artifact |
-   |-----|--------|----------|----------|
-   | `android` | `ubuntu-latest` | 安装 Java 17 → `flutter build apk --release` | `android-apk`（`*.apk`）|
-   | `windows` | `windows-latest` | `flutter build windows --release` → `Compress-Archive` | `windows-app`（`windows-release.zip`）|
-   | `linux` | `ubuntu-latest` | 安装 GTK/Clang 依赖 → `flutter build linux --release` | `linux-app`（`linux-release.tar.gz`）|
-   | `macos` | `macos-latest` | `flutter build macos --release` → `zip` `.app` | `macos-app`（`macos-release.zip`）|
+### 构建平台
+- **Android**: APK + AAB（支持签名）
+- **Windows**: ZIP 压缩包
+- **macOS**: ZIP 压缩包  
+- **Linux**: TAR.GZ 压缩包
+- **Web**: TAR.GZ 压缩包
 
-   - 使用方式：在 Actions → **Flutter Release Build** 中选择对应运行，打开 Job 底部的 **Artifacts** 下载平台制品。Windows/Linux/macOS 压缩包已包含可执行目录，Android APK 可直接安装或上传商店。
+### GitHub Secrets 配置
 
-> 需要注入密钥、签名或私有配置时，请通过 GitHub Secrets 传递并在 workflow 中引用，避免明文写入仓库。
+为支持 Android 正式发布，请在仓库设置中配置以下 Secrets：
 
-### CI/CD 配置说明 (GitHub Secrets)
+| Secret 名称 | 用途 | 必需 |
+|------------|------|------|
+| `ANDROID_KEYSTORE_BASE64` | Android 签名密钥 (Base64) | 正式发布必需 |
+| `ANDROID_KEY_ALIAS` | 密钥别名 | 正式发布必需 |
+| `ANDROID_KEY_PASSWORD` | 密钥密码 | 正式发布必需 |
+| `ANDROID_STORE_PASSWORD` | Keystore 密码 | 正式发布必需 |
 
-为了使 `release.yml` 工作流能够正常签名 Android 应用，建议在 GitHub 仓库设置中添加以下 Secrets：
+> 详细配置说明请参考：[GitHub Actions CI/CD 配置指南](Documentation/GitHub-Actions-CICD-配置指南.md)
 
-- `ANDROID_KEYSTORE_BASE64`: 签名文件（.jks）的 Base64 编码字符串。
-  - 获取方法：`certutil -encode android/app/sign/prompt_optimization.jks tmp.b64 && type tmp.b64` (Windows) 或 `base64 -i android/app/sign/prompt_optimization.jks` (macOS/Linux)。
+### 使用方法
 
-如果不配置该 Secret，Android 构建步骤将尝试使用本地仓库中的签名文件（如果存在且路径正确）。
+#### 测试构建
+```bash
+git push origin main
+```
 
+#### 正式发布
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+### 工作流特性
+- **统一打包格式**: 所有平台输出标准压缩包格式
+- **自动发布**: Git Tag 触发时自动创建 GitHub Release
+- **版本管理**: 分支推送仅测试，Tag 推送才发布
+- **多平台支持**: 一次构建，支持所有主流平台
+- **安全签名**: Android 应用支持自动签名配置
