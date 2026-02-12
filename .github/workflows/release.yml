@@ -2,139 +2,223 @@ name: Flutter Release Build
 
 on:
   push:
-    tags:
-      - "v*"
+    tags: [ 'v*' ]
   workflow_dispatch:
-
-env:
-  FLUTTER_CHANNEL: stable
+    inputs:
+      build_android:
+        description: 'Build Android APK'
+        required: false
+        default: true
+        type: boolean
+      build_windows:
+        description: 'Build Windows EXE'
+        required: false
+        default: true
+        type: boolean
+      build_linux:
+        description: 'Build Linux App'
+        required: false
+        default: true
+        type: boolean
+      build_macos:
+        description: 'Build macOS App'
+        required: false
+        default: true
+        type: boolean
 
 jobs:
   android:
     name: Build Android APK
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.inputs.build_android == 'true'
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: ${{ env.FLUTTER_CHANNEL }}
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.0'
+        channel: 'stable'
+        cache: true
 
-      - name: Install dependencies
-        run: flutter pub get
+    - name: Install dependencies
+      run: flutter pub get
 
-      - name: Build release APK
-        run: flutter build apk --release
+    - name: Generate code (Drift database)
+      run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: build/app/outputs/flutter-apk/*.apk
+    - name: Setup Android signing
+      run: |
+        mkdir -p android/app/sign
+        echo "${{ secrets.ANDROID_SIGNING_KEY }}" | base64 -d > android/app/sign/prompt_optimization.jks
+
+    - name: Build APK (release)
+      run: flutter build apk --release
+      env:
+        ANDROID_SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGNING_KEY_ALIAS }}
+        ANDROID_SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
+        ANDROID_SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
+
+    - name: Build App Bundle (release)
+      run: flutter build appbundle --release
+      env:
+        ANDROID_SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGNING_KEY_ALIAS }}
+        ANDROID_SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGNING_KEY_PASSWORD }}
+        ANDROID_SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGNING_STORE_PASSWORD }}
+
+    - name: Upload Android artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk
+        path: |
+          build/app/outputs/flutter-apk/app-release.apk
+          build/app/outputs/bundle/release/app-release.aab
+        retention-days: 30
 
   windows:
-    name: Build Windows App
+    name: Build Windows EXE
     runs-on: windows-latest
+    if: github.event_name == 'push' || github.event.inputs.build_windows == 'true'
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: ${{ env.FLUTTER_CHANNEL }}
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.0'
+        channel: 'stable'
+        cache: true
 
-      - name: Enable Windows desktop
-        run: flutter config --enable-windows-desktop
+    - name: Install dependencies
+      run: flutter pub get
 
-      - name: Install dependencies
-        run: flutter pub get
+    - name: Generate code (Drift database)
+      run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Build Windows release
-        run: flutter build windows --release
+    - name: Build Windows (release)
+      run: flutter build windows --release
 
-      - name: Package Windows artifact
-        shell: pwsh
-        run: Compress-Archive -Path "build/windows/runner/Release/*" -DestinationPath windows-release.zip
+    - name: Compress Windows build
+      shell: powershell
+      run: |
+        Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath windows-release.zip
 
-      - name: Upload Windows artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-app
-          path: windows-release.zip
+    - name: Upload Windows artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-app
+        path: windows-release.zip
+        retention-days: 30
 
   linux:
     name: Build Linux App
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.inputs.build_linux == 'true'
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Install Linux build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.0'
+        channel: 'stable'
+        cache: true
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: ${{ env.FLUTTER_CHANNEL }}
+    - name: Install Linux dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
 
-      - name: Enable Linux desktop
-        run: flutter config --enable-linux-desktop
+    - name: Install dependencies
+      run: flutter pub get
 
-      - name: Install dependencies
-        run: flutter pub get
+    - name: Generate code (Drift database)
+      run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Build Linux release
-        run: flutter build linux --release
+    - name: Build Linux (release)
+      run: flutter build linux --release
 
-      - name: Package Linux artifact
-        run: |
-          tar -czf linux-release.tar.gz -C build/linux/x64/release/bundle .
+    - name: Compress Linux build
+      run: |
+        tar -czf linux-release.tar.gz -C build/linux/x64/release/ .
 
-      - name: Upload Linux artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-app
-          path: linux-release.tar.gz
+    - name: Upload Linux artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-app
+        path: linux-release.tar.gz
+        retention-days: 30
 
   macos:
     name: Build macOS App
     runs-on: macos-latest
+    if: github.event_name == 'push' || github.event.inputs.build_macos == 'true'
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: ${{ env.FLUTTER_CHANNEL }}
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.0'
+        channel: 'stable'
+        cache: true
 
-      - name: Enable macOS desktop
-        run: flutter config --enable-macos-desktop
+    - name: Install dependencies
+      run: flutter pub get
 
-      - name: Install dependencies
-        run: flutter pub get
+    - name: Generate code (Drift database)
+      run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Build macOS release
-        run: flutter build macos --release
+    - name: Build macOS (release)
+      run: flutter build macos --release
 
-      - name: Package macOS artifact
-        run: |
-          cd build/macos/Build/Products/Release
-          zip -r macos-release.zip "Prompt Optimizer.app"
+    - name: Compress macOS build
+      run: |
+        cd build/macos/Build/Products/Release
+        zip -r macos-release.zip Prompt\ Optimizer.app
 
-      - name: Upload macOS artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-app
-          path: build/macos/Build/Products/Release/macos-release.zip
+    - name: Upload macOS artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-app
+        path: build/macos/Build/Products/Release/macos-release.zip
+        retention-days: 30
+
+  create-release:
+    name: Create GitHub Release
+    needs: [android, windows, linux, macos]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          android-apk/*.apk
+          android-apk/*.aab
+          windows-app/*.zip
+          linux-app/*.tar.gz
+          macos-app/*.zip
+        generate_release_notes: true
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
