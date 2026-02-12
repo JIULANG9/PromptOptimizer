@@ -131,5 +131,28 @@ dart format .
 | `/history` | 历史记录列表 |
 | `/history/:id` | 历史记录详情 |
 
+## CI/CD：GitHub Actions
 
+项目采用「两套工作流」协同保障质量与发布：
+
+1. **`.github/workflows/flutter-ci.yml` — Flutter CI**  
+   - 触发：`main` 分支的 push / PR。  
+   - Runner：`ubuntu-latest`。  
+   - 步骤：`flutter pub get` → `dart format --set-exit-if-changed` → `flutter analyze` → `flutter test`。  
+   - 作用：作为合并门禁，确保提交在进入主干前即通过格式、静态分析与单测校验。
+
+2. **`.github/workflows/release.yml` — Flutter Release Build**  
+   - 触发：命名为 `v*` 的 Tag push 或手动 **workflow_dispatch**。  
+   - Job & 产物：
+
+   | Job | Runner | 关键步骤 | Artifact |
+   |-----|--------|----------|----------|
+   | `android` | `ubuntu-latest` | 安装 Java 17 → `flutter build apk --release` | `android-apk`（`*.apk`）|
+   | `windows` | `windows-latest` | `flutter build windows --release` → `Compress-Archive` | `windows-app`（`windows-release.zip`）|
+   | `linux` | `ubuntu-latest` | 安装 GTK/Clang 依赖 → `flutter build linux --release` | `linux-app`（`linux-release.tar.gz`）|
+   | `macos` | `macos-latest` | `flutter build macos --release` → `zip` `.app` | `macos-app`（`macos-release.zip`）|
+
+   - 使用方式：在 Actions → **Flutter Release Build** 中选择对应运行，打开 Job 底部的 **Artifacts** 下载平台制品。Windows/Linux/macOS 压缩包已包含可执行目录，Android APK 可直接安装或上传商店。
+
+> 需要注入密钥、签名或私有配置时，请通过 GitHub Secrets 传递并在 workflow 中引用，避免明文写入仓库。
 
