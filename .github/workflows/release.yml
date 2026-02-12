@@ -1,0 +1,147 @@
+name: Flutter Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      target_platform:
+        description: 'Target platform to build'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - android
+          - windows
+          - linux
+          - macos
+          - ios
+          - web
+
+env:
+  FLUTTER_VERSION: '3.19.6'
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - target: android
+            os: ubuntu-latest
+            build_cmd: flutter build apk --release && flutter build appbundle --release
+            artifact_path: build/app/outputs/
+            artifact_name: android
+          - target: windows
+            os: windows-latest
+            build_cmd: flutter build windows --release
+            artifact_path: build/windows/runner/Release/
+            artifact_name: windows
+          - target: linux
+            os: ubuntu-latest
+            build_cmd: flutter build linux --release
+            artifact_path: build/linux/*/release/bundle/
+            artifact_name: linux
+          - target: macos
+            os: macos-latest
+            build_cmd: flutter build macos --release
+            artifact_path: build/macos/Build/Products/Release/
+            artifact_name: macos
+          - target: ios
+            os: macos-latest
+            build_cmd: flutter build ios --release --no-codesign
+            artifact_path: build/ios/iphoneos/
+            artifact_name: ios
+          - target: web
+            os: ubuntu-latest
+            build_cmd: flutter build web
+            artifact_path: build/web/
+            artifact_name: web
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Setup Java (for Android)
+        if: matrix.target == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Linux dependencies
+        if: matrix.target == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build ${{ matrix.target }}
+        run: ${{ matrix.build_cmd }}
+
+      - name: Upload ${{ matrix.target }} artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}-build
+          path: ${{ matrix.artifact_path }}
+          retention-days: 30
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            release-assets/android-build/**/*.apk
+            release-assets/android-build/**/*.aab
+            release-assets/windows-build/**/*.exe
+            release-assets/linux-build/**
+            release-assets/macos-build/**/*.app
+            release-assets/ios-build/**/*.app
+            release-assets/web-build/**
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            ## 🚀 Prompt Optimizer ${{ github.ref_name }}
+            
+            ### 📱 下载链接
+            - **Android APK**: 适用于直接安装
+            - **Android AAB**: 适用于 Google Play 发布
+            - **Windows**: Windows 桌面应用
+            - **Linux**: Linux 桌面应用
+            - **macOS**: macOS 桌面应用
+            - **iOS**: iOS 应用（需要签名）
+            - **Web**: 在线版本
+            
+            ### ✨ 新特性
+            请查看 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) 了解详细更新内容。
+            
+            ### 📖 使用说明
+            详细使用说明请参考 [README.md](https://github.com/${{ github.repository }}/blob/main/README.md)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
