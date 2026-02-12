@@ -1,0 +1,347 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+
+env:
+  FLUTTER_VERSION: '3.38.9'  # 使用稳定版本
+  DART_VERSION: '3.10.8'  # 与项目要求 ^3.10.3 兼容
+  JAVA_VERSION: '17'
+
+jobs:
+  # 代码质量检查
+  analyze:
+    name: Code Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          dart-version: ${{ env.DART_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+  # Android 构建任务
+  build_android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    needs: analyze
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          dart-version: ${{ env.DART_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build APK (debug for PR, release for push)
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            flutter build apk --debug
+          else
+            flutter build apk --release
+          fi
+
+      - name: Build AAB (release only)
+        if: github.event_name == 'push'
+        run: flutter build appbundle --release
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/app-*.apk
+          retention-days: 30
+
+      - name: Upload AAB artifacts
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+  # Windows 构建任务
+  build_windows:
+    name: Build Windows
+    runs-on: windows-latest
+    needs: analyze
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          dart-version: ${{ env.DART_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Windows executable
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            flutter build windows --debug
+          else
+            flutter build windows --release
+          fi
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: build/windows/runner/Release/*.exe
+          retention-days: 30
+
+  # Linux 构建任务
+  build_linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    needs: analyze
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          dart-version: ${{ env.DART_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Linux executable
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            flutter build linux --debug
+          else
+            flutter build linux --release
+          fi
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-app
+          path: build/linux/*/release/bundle/*
+          retention-days: 30
+
+  # macOS 构建任务
+  build_macos:
+    name: Build macOS
+    runs-on: macos-latest
+    needs: analyze
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          dart-version: ${{ env.DART_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build macOS app
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            flutter build macos --debug
+          else
+            flutter build macos --release
+          fi
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-app
+          path: build/macos/Build/Products/Release/*.app
+          retention-days: 30
+
+  # iOS 构建任务 (仅在 macOS 上运行)
+  build_ios:
+    name: Build iOS
+    runs-on: macos-latest
+    needs: analyze
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          dart-version: ${{ env.DART_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build iOS app
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            flutter build ios --debug --no-codesign
+          else
+            flutter build ios --release --no-codesign
+          fi
+
+      - name: Upload iOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-app
+          path: build/ios/iphoneos/*.app
+          retention-days: 30
+
+  # Web 构建任务
+  build_web:
+    name: Build Web
+    runs-on: ubuntu-latest
+    needs: analyze
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          dart-version: ${{ env.DART_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build Web app
+        run: flutter build web
+
+      - name: Upload Web artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-app
+          path: build/web/*
+          retention-days: 30
+
+  # 发布任务 (仅在 tag push 时执行)
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build_android, build_windows, build_linux, build_macos, build_ios, build_web]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/android-apk/**/*.apk
+            artifacts/android-aab/**/*.aab
+            artifacts/windows-exe/**/*.exe
+            artifacts/linux-app/**
+            artifacts/macos-app/**/*.app
+            artifacts/ios-app/**/*.app
+            artifacts/web-app/**
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # 部署到 GitHub Pages (Web 版本)
+  deploy_web:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build_web
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Web artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: web-app
+          path: build/web
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+          keep_files: true
