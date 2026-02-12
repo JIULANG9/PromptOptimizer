@@ -317,25 +317,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # 部署到 GitHub Pages (Web 版本)
-  deploy_web:
-    name: Deploy to GitHub Pages
-    runs-on: ubuntu-latest
-    needs: build_web
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download Web artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: web-app
-          path: build/web
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
-          keep_files: true

@@ -77,20 +77,20 @@ class HistoryListNotifier extends StateNotifier<HistoryListState> {
 /// 历史记录 DAO Provider
 final historyDaoProvider = Provider<HistoryDao>((ref) {
   return ref.watch(appDatabaseProvider).historyDao;
-});
+}, dependencies: [appDatabaseProvider]);
 
 /// 历史记录仓库 Provider
 final historyRepositoryProvider = Provider<HistoryRepository>((ref) {
   return HistoryRepository(ref.watch(historyDaoProvider));
-});
+}, dependencies: [historyDaoProvider, appDatabaseProvider]);
 
 /// 历史记录用例 Provider
 final historyUseCasesProvider = Provider<HistoryUseCases>((ref) {
   return HistoryUseCases(ref.watch(historyRepositoryProvider));
-});
+}, dependencies: [historyRepositoryProvider]);
 
 /// 历史记录列表状态 Provider
 final historyListProvider =
     StateNotifierProvider<HistoryListNotifier, HistoryListState>((ref) {
       return HistoryListNotifier(ref.watch(historyUseCasesProvider));
-    });
+    }, dependencies: [historyUseCasesProvider]);

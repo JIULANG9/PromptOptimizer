@@ -1,0 +1,29 @@
+import 'package:hive_flutter/hive_flutter.dart';
+
+import '../../core/constants/app_constants.dart';
+import '../../database/app_database.dart';
+import '../../database/seed/database_seeder.dart';
+import 'hive_init.dart';
+
+class AppBootstrapResult {
+  final Box settingsBox;
+  final AppDatabase database;
+
+  const AppBootstrapResult({
+    required this.settingsBox,
+    required this.database,
+  });
+}
+
+class AppBootstrapper {
+  Future<AppBootstrapResult> bootstrap() async {
+    final settingsBox = await openSettingsBox(AppConstants.settingsBoxName);
+
+    final database = AppDatabase();
+
+    final seeder = DatabaseSeeder(database.templateDao, database.apiConfigDao);
+    await seeder.seedAll();
+
+    return AppBootstrapResult(settingsBox: settingsBox, database: database);
+  }
+}

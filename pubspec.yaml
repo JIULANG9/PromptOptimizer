@@ -20,6 +20,7 @@ dependencies:
   go_router: ^14.8.1
   # 数据库 - Drift (SQLite)
   drift: ^2.23.1
+  sqlite3_flutter_libs: ^0.5.28
   # KV存储 - Hive (UI偏好设置)
   hive_flutter: ^1.1.0
   # 网络请求

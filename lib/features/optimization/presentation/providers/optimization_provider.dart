@@ -222,7 +222,7 @@ final dioProvider = Provider<Dio>((ref) {
 /// OpenAI API 服务 Provider
 final openAiApiServiceProvider = Provider<OpenAiApiService>((ref) {
   return OpenAiApiService(ref.watch(dioProvider));
-});
+}, dependencies: [dioProvider]);
 
 /// 优化用例 Provider
 final optimizePromptUseCaseProvider = Provider<OptimizePromptUseCase>((ref) {
@@ -232,7 +232,12 @@ final optimizePromptUseCaseProvider = Provider<OptimizePromptUseCase>((ref) {
     templateRepo: ref.watch(templateRepositoryProvider),
     historyRepo: ref.watch(historyRepositoryProvider),
   );
-});
+}, dependencies: [
+  openAiApiServiceProvider,
+  apiConfigRepositoryProvider,
+  templateRepositoryProvider,
+  historyRepositoryProvider,
+]);
 
 /// 优化状态 Provider
 final optimizationProvider =
@@ -241,4 +246,4 @@ final optimizationProvider =
         ref.watch(optimizePromptUseCaseProvider),
         ref.watch(settingsRepositoryProvider),
       );
-    });
+    }, dependencies: [optimizePromptUseCaseProvider, settingsRepositoryProvider]);

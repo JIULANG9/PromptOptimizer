@@ -110,7 +110,7 @@ final aesCryptoServiceProvider = Provider<AesCryptoService>((ref) {
 /// API 配置 DAO Provider
 final apiConfigDaoProvider = Provider<ApiConfigDao>((ref) {
   return ref.watch(appDatabaseProvider).apiConfigDao;
-});
+}, dependencies: [appDatabaseProvider]);
 
 /// API 配置仓库 Provider
 final apiConfigRepositoryProvider = Provider<ApiConfigRepository>((ref) {
@@ -118,15 +118,15 @@ final apiConfigRepositoryProvider = Provider<ApiConfigRepository>((ref) {
     ref.watch(apiConfigDaoProvider),
     ref.watch(aesCryptoServiceProvider),
   );
-});
+}, dependencies: [apiConfigDaoProvider, aesCryptoServiceProvider, appDatabaseProvider]);
 
 /// API 配置用例 Provider
 final apiConfigUseCasesProvider = Provider<ApiConfigUseCases>((ref) {
   return ApiConfigUseCases(ref.watch(apiConfigRepositoryProvider));
-});
+}, dependencies: [apiConfigRepositoryProvider]);
 
 /// API 配置列表状态 Provider
 final apiConfigListProvider =
     StateNotifierProvider<ApiConfigListNotifier, ApiConfigListState>((ref) {
       return ApiConfigListNotifier(ref.watch(apiConfigUseCasesProvider));
-    });
+    }, dependencies: [apiConfigUseCasesProvider]);

@@ -1,8 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
-// 条件导入
-import 'native_database.dart' if (dart.library.html) 'web_database.dart';
+import 'connection/open_connection.dart';
 
 import 'daos/api_config_dao.dart';
 import 'daos/history_dao.dart';
@@ -49,12 +47,8 @@ class AppDatabase extends _$AppDatabase {
 }
 
 /// 打开数据库连接
-dynamic _openConnection() {
-  if (kIsWeb) {
-    // Web 平台使用内存数据库
-    return WebDatabaseConnection.createConnection();
-  } else {
-    // 桌面和移动平台使用 SQLite 文件
-    return NativeDatabaseConnection.createConnection();
-  }
+LazyDatabase _openConnection() {
+  return LazyDatabase(() async {
+    return await openExecutor();
+  });
 }

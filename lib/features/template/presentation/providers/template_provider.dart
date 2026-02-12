@@ -101,20 +101,20 @@ class TemplateListNotifier extends StateNotifier<TemplateListState> {
 /// 模板 DAO Provider
 final templateDaoProvider = Provider<TemplateDao>((ref) {
   return ref.watch(appDatabaseProvider).templateDao;
-});
+}, dependencies: [appDatabaseProvider]);
 
 /// 模板仓库 Provider
 final templateRepositoryProvider = Provider<TemplateRepository>((ref) {
   return TemplateRepository(ref.watch(templateDaoProvider));
-});
+}, dependencies: [templateDaoProvider, appDatabaseProvider]);
 
 /// 模板用例 Provider
 final templateUseCasesProvider = Provider<TemplateUseCases>((ref) {
   return TemplateUseCases(ref.watch(templateRepositoryProvider));
-});
+}, dependencies: [templateRepositoryProvider]);
 
 /// 模板列表状态 Provider
 final templateListProvider =
     StateNotifierProvider<TemplateListNotifier, TemplateListState>((ref) {
       return TemplateListNotifier(ref.watch(templateUseCasesProvider));
-    });
+    }, dependencies: [templateUseCasesProvider]);

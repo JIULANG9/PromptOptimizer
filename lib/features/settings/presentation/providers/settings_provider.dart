@@ -55,11 +55,11 @@ final settingsBoxProvider = Provider<Box>((ref) {
 /// 设置仓库 Provider
 final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   return SettingsRepository(ref.watch(settingsBoxProvider));
-});
+}, dependencies: [settingsBoxProvider]);
 
 /// 设置状态 Provider
 final settingsProvider = StateNotifierProvider<SettingsNotifier, AppSettings>((
   ref,
 ) {
   return SettingsNotifier(ref.watch(settingsRepositoryProvider));
-});
+}, dependencies: [settingsRepositoryProvider, settingsBoxProvider]);
