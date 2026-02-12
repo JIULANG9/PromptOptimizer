@@ -72,17 +72,11 @@ jobs:
       - name: Generate code
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Build APK (debug for PR, release for push)
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            flutter build apk --debug
-          else
-            flutter build apk --release
-          fi
+      - name: Build APK (debug for CI)
+        run: flutter build apk --debug
 
-      - name: Build AAB (release only)
-        if: github.event_name == 'push'
-        run: flutter build appbundle --release
+      - name: Build AAB (debug for CI)
+        run: flutter build appbundle --debug
 
       - name: Upload APK artifacts
         uses: actions/upload-artifact@v4
@@ -125,11 +119,11 @@ jobs:
 
       - name: Build Windows executable
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          if ('${{ github.event_name }}' -eq 'pull_request') {
             flutter build windows --debug
-          else
+          } else {
             flutter build windows --release
-          fi
+          }
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
