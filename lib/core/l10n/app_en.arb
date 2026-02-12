@@ -1,0 +1,166 @@
+{
+  "@@locale": "en",
+  "appTitle": "Prompt Optimizer",
+
+  "tabUserOptimize": "User Prompt",
+  "tabSystemOptimize": "System Prompt",
+
+  "btnOptimize": "Optimize",
+  "btnCopy": "Copy",
+  "btnPaste": "Paste",
+  "btnSettings": "Settings",
+  "btnSave": "Save",
+  "btnCancel": "Cancel",
+  "btnDelete": "Delete",
+  "btnEdit": "Edit",
+  "btnAdd": "Add",
+  "btnClearAll": "Clear All",
+  "btnReOptimize": "Re-optimize",
+  "btnResetKey": "Reset Key",
+  "btnConfirm": "Confirm",
+  "btnFullscreen": "Fullscreen",
+  "btnExitFullscreen": "Exit Fullscreen",
+  "btnTest": "Test",
+  "btnSelectProvider": "Provider",
+  "btnSelectModel": "Model",
+  "btnLoadingModels": "Loading...",
+
+  "labelOriginalPrompt": "Original Prompt",
+  "labelTesting": "Testing...",
+  "labelSelectProvider": "Select Provider",
+  "labelSelectModel": "Select Model",
+  "labelNoModels": "No models found",
+  "labelModelCount": "{count} models",
+  "@labelModelCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "labelOptimizedPrompt": "Optimized Prompt",
+  "labelModelSelect": "Model",
+  "labelTemplateSelect": "Template",
+  "labelEnabled": "Enabled",
+  "labelDisabled": "Disabled",
+  "labelDefault": "Default",
+  "labelBuiltin": "Built-in",
+  "labelCustom": "Custom",
+  "labelUserOptimize": "User Prompt Optimize",
+  "labelSystemOptimize": "System Prompt Optimize",
+  "labelAll": "All",
+  "labelSystemRole": "System Role Content",
+  "labelUserRole": "User Role Content",
+
+  "settingsTitle": "Settings",
+  "settingsModelConfig": "Model Configuration",
+  "settingsTemplateConfig": "Template Management",
+  "settingsHistory": "History",
+  "settingsDataManagement": "Data Management",
+  "settingsExportData": "Export Data",
+  "settingsImportData": "Import Data",
+  "settingsExportDataDesc": "Export all configs, templates and history",
+  "settingsImportDataDesc": "Restore data from backup file",
+  "settingsAboutSection": "About",
+  "settingsPrivacyPolicy": "Privacy Policy",
+  "settingsUserAgreement": "User Agreement",
+  "settingsOpenSource": "Open Source Licenses",
+  "settingsJoinGroup": "Join Discussion Group",
+  "settingsLanguage": "Language",
+  "settingsTheme": "Theme",
+
+  "historyTitle": "History",
+  "historyEmpty": "No optimization history yet",
+  "historyClearAll": "Clear All History",
+  "historyClearConfirm": "Are you sure you want to clear all history?",
+  "historyDetail": "History Detail",
+
+  "apiConfigTitle": "API Configuration",
+  "apiConfigName": "Config Name",
+  "apiConfigBaseUrl": "Base URL",
+  "apiConfigModelId": "Model ID",
+  "apiConfigApiKey": "API Key",
+  "apiConfigAdd": "Add API Config",
+  "apiConfigEdit": "Edit API Config",
+  "apiConfigEmpty": "No API configurations yet",
+  "apiConfigSetDefault": "Set as Default",
+  "apiConfigToggleEnabled": "Toggle Enabled",
+  "apiConfigDeleteConfirm": "Are you sure you want to delete this config?",
+  "apiConfigNoAvailable": "No available model config, please add one",
+  "btnAddNow": "Add Now",
+
+  "templateTitle": "Template Management",
+  "templateName": "Template Name",
+  "templateType": "Template Type",
+  "templateContent": "Template Content",
+  "templateDescription": "Description",
+  "templateAdd": "Add Template",
+  "templateEdit": "Edit Template",
+  "templateEmpty": "No templates yet",
+  "templateDeleteConfirm": "Are you sure you want to delete this template?",
+  "templatePlaceholderHint": "Use the originalPrompt placeholder for user input",
+
+  "errorNoApiConfig": "Please configure an API first",
+  "errorNoTemplate": "Please select a template",
+  "errorApiCallFailed": "API call failed: {message}",
+  "@errorApiCallFailed": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "errorEmptyPrompt": "Please enter a prompt to optimize",
+  "errorNetworkTimeout": "Network timeout, please try again",
+  "errorUnknown": "An unknown error occurred",
+  "errorNameRequired": "Name is required",
+  "errorApiKeyRequired": "API Key is required",
+  "errorSelectProviderFirst": "Please select a provider first",
+  "errorLoadModelsFailed": "Failed to load models: {message}",
+  "@errorLoadModelsFailed": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "errorBaseUrlRequired": "Base URL is required",
+  "errorInvalidUrl": "Please enter a valid URL",
+
+  "toastCopied": "Copied to clipboard",
+  "toastSaved": "Saved successfully",
+  "toastDeleted": "Deleted successfully",
+  "toastOptimizing": "Optimizing...",
+  "toastOptimizeComplete": "Optimization complete",
+  "toastTestSuccess": "API connection successful",
+  "toastSetDefault": "Set as default",
+  "toastExportSuccess": "Data exported successfully",
+  "toastExportFailed": "Export failed: {message}",
+  "@toastExportFailed": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "toastImportSuccess": "Data imported successfully",
+  "toastImportFailed": "Import failed: {message}",
+  "@toastImportFailed": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "toastImportInvalidFile": "Invalid backup file",
+  "toastQrCodeSaved": "Saved to gallery",
+  "toastSaveQrCodeFailed": "Save failed, please check gallery permission",
+
+  "themeSystem": "Follow System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+
+  "langZh": "Chinese",
+  "langEn": "English",
+
+  "confirmDeleteTitle": "Confirm Delete",
+  "confirmClearTitle": "Confirm Clear",
+  "importConfirmTitle": "Import Data",
+  "importConfirmMessage": "Import will overwrite data with same ID, new data will be appended. Continue?",
+
+  "groupGuideText": "Welcome to join our WeChat discussion group for latest updates, suggestions and feedback.",
+  "btnSaveQrCode": "Save QR Code",
+
+  "promptInputHint": "Enter or paste your prompt here...",
+  "optimizedResultHint": "Optimized result will appear here..."
+}

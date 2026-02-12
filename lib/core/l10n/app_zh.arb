@@ -1,0 +1,166 @@
+{
+  "@@locale": "zh",
+  "appTitle": "提示词优化器",
+
+  "tabUserOptimize": "用户提示词",
+  "tabSystemOptimize": "系统提示词",
+
+  "btnOptimize": "优化",
+  "btnCopy": "复制",
+  "btnPaste": "粘贴",
+  "btnSettings": "设置",
+  "btnSave": "保存",
+  "btnCancel": "取消",
+  "btnDelete": "删除",
+  "btnEdit": "编辑",
+  "btnAdd": "添加",
+  "btnClearAll": "清空",
+  "btnReOptimize": "重新优化",
+  "btnResetKey": "重置密钥",
+  "btnConfirm": "确认",
+  "btnFullscreen": "全屏",
+  "btnExitFullscreen": "退出全屏",
+  "btnTest": "测试",
+  "btnSelectProvider": "提供商",
+  "btnSelectModel": "模型",
+  "btnLoadingModels": "加载中...",
+
+  "labelOriginalPrompt": "原始提示词",
+  "labelTesting": "测试中...",
+  "labelSelectProvider": "选择提供商",
+  "labelSelectModel": "选择模型",
+  "labelNoModels": "未找到模型",
+  "labelModelCount": "{count} 个模型",
+  "@labelModelCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "labelOptimizedPrompt": "优化后提示词",
+  "labelModelSelect": "模型",
+  "labelTemplateSelect": "模板",
+  "labelEnabled": "已启用",
+  "labelDisabled": "已禁用",
+  "labelDefault": "默认",
+  "labelBuiltin": "内置",
+  "labelCustom": "自定义",
+  "labelUserOptimize": "用户提示词优化",
+  "labelSystemOptimize": "系统提示词优化",
+  "labelAll": "全部",
+  "labelSystemRole": "系统角色内容",
+  "labelUserRole": "用户角色内容",
+
+  "settingsTitle": "设置",
+  "settingsModelConfig": "模型配置",
+  "settingsTemplateConfig": "模板管理",
+  "settingsHistory": "历史记录",
+  "settingsDataManagement": "数据管理",
+  "settingsExportData": "导出数据",
+  "settingsImportData": "导入数据",
+  "settingsExportDataDesc": "导出所有配置、模板和历史记录",
+  "settingsImportDataDesc": "从备份文件恢复数据",
+  "settingsAboutSection": "关于应用",
+  "settingsPrivacyPolicy": "隐私政策",
+  "settingsUserAgreement": "用户协议",
+  "settingsOpenSource": "开源协议",
+  "settingsJoinGroup": "加入交流群",
+  "settingsLanguage": "语言",
+  "settingsTheme": "主题",
+
+  "historyTitle": "历史记录",
+  "historyEmpty": "暂无优化历史",
+  "historyClearAll": "清空所有历史",
+  "historyClearConfirm": "确定要清空所有历史记录吗？",
+  "historyDetail": "历史详情",
+
+  "apiConfigTitle": "API 配置",
+  "apiConfigName": "配置名称",
+  "apiConfigBaseUrl": "基础地址",
+  "apiConfigModelId": "模型 ID",
+  "apiConfigApiKey": "API 密钥",
+  "apiConfigAdd": "添加 API 配置",
+  "apiConfigEdit": "编辑 API 配置",
+  "apiConfigEmpty": "暂无 API 配置",
+  "apiConfigSetDefault": "设为默认",
+  "apiConfigToggleEnabled": "切换启用状态",
+  "apiConfigDeleteConfirm": "确定要删除此配置吗？",
+  "apiConfigNoAvailable": "暂无可选模型配置，请添加",
+  "btnAddNow": "立即添加",
+
+  "templateTitle": "模板管理",
+  "templateName": "模板名称",
+  "templateType": "模板类型",
+  "templateContent": "模板内容",
+  "templateDescription": "描述",
+  "templateAdd": "添加模板",
+  "templateEdit": "编辑模板",
+  "templateEmpty": "暂无模板",
+  "templateDeleteConfirm": "确定要删除此模板吗？",
+  "templatePlaceholderHint": "使用 originalPrompt 占位符代表用户输入",
+
+  "errorNoApiConfig": "请先配置 API",
+  "errorNoTemplate": "请选择模板",
+  "errorApiCallFailed": "API 调用失败：{message}",
+  "@errorApiCallFailed": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "errorEmptyPrompt": "请输入需要优化的提示词",
+  "errorNetworkTimeout": "网络超时，请重试",
+  "errorUnknown": "发生未知错误",
+  "errorNameRequired": "名称不能为空",
+  "errorApiKeyRequired": "API 密钥不能为空",
+  "errorSelectProviderFirst": "请先选择提供商",
+  "errorLoadModelsFailed": "加载模型失败：{message}",
+  "@errorLoadModelsFailed": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "errorBaseUrlRequired": "基础地址不能为空",
+  "errorInvalidUrl": "请输入有效的 URL",
+
+  "toastCopied": "已复制到剪贴板",
+  "toastSaved": "保存成功",
+  "toastDeleted": "删除成功",
+  "toastOptimizing": "正在优化...",
+  "toastOptimizeComplete": "优化完成",
+  "toastTestSuccess": "API 连接成功",
+  "toastSetDefault": "已设为默认",
+  "toastExportSuccess": "数据导出成功",
+  "toastExportFailed": "导出失败：{message}",
+  "@toastExportFailed": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "toastImportSuccess": "数据导入成功",
+  "toastImportFailed": "导入失败：{message}",
+  "@toastImportFailed": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "toastImportInvalidFile": "无效的备份文件",
+  "toastQrCodeSaved": "已保存到相册",
+  "toastSaveQrCodeFailed": "保存失败，请检查相册权限",
+
+  "themeSystem": "跟随系统",
+  "themeLight": "浅色",
+  "themeDark": "深色",
+
+  "langZh": "中文",
+  "langEn": "英语",
+
+  "confirmDeleteTitle": "确认删除",
+  "confirmClearTitle": "确认清空",
+  "importConfirmTitle": "导入数据",
+  "importConfirmMessage": "导入将覆盖同 ID 数据，新数据将追加。确定继续？",
+
+  "groupGuideText": "欢迎加入我们的微信交流群，获取最新资讯、提交建议与反馈。",
+  "btnSaveQrCode": "保存二维码",
+
+  "promptInputHint": "在此输入或粘贴您的提示词...",
+  "optimizedResultHint": "优化结果将在此显示..."
+}

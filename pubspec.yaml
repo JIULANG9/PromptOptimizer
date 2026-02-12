@@ -1,0 +1,79 @@
+name: "prompt_optimizer"
+description: "Prompt Optimizer - A cross-platform AI prompt optimization tool."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.3
+
+dependencies:
+  flutter:
+
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  # 状态管理 - Riverpod (MVI架构核心)
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  # 路由管理
+  go_router: ^14.8.1
+  # 数据库 - Drift (SQLite)
+  drift: ^2.23.1
+  sqlite3_flutter_libs: ^0.5.28
+  # KV存储 - Hive (UI偏好设置)
+  hive_flutter: ^1.1.0
+  # 网络请求
+  dio: ^5.7.0
+  # 加密 - AES-256
+  encrypt: ^5.0.3
+  # UUID生成
+  uuid: ^4.5.1
+  # 路径工具
+  path: ^1.9.0
+  path_provider: ^2.1.5
+  # 文件选择器（导入导出）
+  file_picker: ^8.0.0+1
+  # 移动端系统分享
+  share_plus: ^10.1.4
+  # 保存图片到相册
+  image_gallery_saver_plus: ^4.0.1
+  # JSON序列化注解
+  json_annotation: ^4.9.0
+  freezed_annotation: ^2.4.4
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  # 代码生成
+  build_runner: ^2.4.14
+  drift_dev: ^2.23.1
+  riverpod_generator: ^2.6.3
+  freezed: ^2.5.7
+  json_serializable: ^6.9.4
+  # 应用图标生成
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  web:
+    generate: true
+  windows:
+    generate: true
+    icon_size: 48
+  macos:
+    generate: true
+  image_path: "assets/images/logo.png"
+  adaptive_icon_background: "#E8E4F0"
+  adaptive_icon_foreground: "assets/images/logo.png"
+
+flutter:
+  generate: true
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/documents/
