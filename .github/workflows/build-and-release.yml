@@ -18,9 +18,8 @@ on:
       - '.gitignore'
 
 env:
-  FLUTTER_VERSION: '3.24.0'
+  FLUTTER_VERSION: '3.19.0'
   JAVA_VERSION: '17'
-  DART_VERSION: '3.10.3'
 
 jobs:
   # 代码质量检查和测试（仅对分支推送和PR运行）
@@ -42,10 +41,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: '3.19.0'
           channel: 'stable'
           cache: true
-          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
@@ -80,10 +78,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: '3.19.0'
           channel: 'stable'
           cache: true
-          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
@@ -140,10 +137,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: '3.19.0'
           channel: 'stable'
           cache: true
-          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
@@ -183,10 +179,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: '3.19.0'
           channel: 'stable'
           cache: true
-          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
@@ -221,10 +216,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: '3.19.0'
           channel: 'stable'
           cache: true
-          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
@@ -259,10 +253,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: '3.19.0'
           channel: 'stable'
           cache: true
-          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
