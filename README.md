@@ -156,3 +156,12 @@ dart format .
 
 > 需要注入密钥、签名或私有配置时，请通过 GitHub Secrets 传递并在 workflow 中引用，避免明文写入仓库。
 
+### CI/CD 配置说明 (GitHub Secrets)
+
+为了使 `release.yml` 工作流能够正常签名 Android 应用，建议在 GitHub 仓库设置中添加以下 Secrets：
+
+- `ANDROID_KEYSTORE_BASE64`: 签名文件（.jks）的 Base64 编码字符串。
+  - 获取方法：`certutil -encode android/app/sign/prompt_optimization.jks tmp.b64 && type tmp.b64` (Windows) 或 `base64 -i android/app/sign/prompt_optimization.jks` (macOS/Linux)。
+
+如果不配置该 Secret，Android 构建步骤将尝试使用本地仓库中的签名文件（如果存在且路径正确）。
+
