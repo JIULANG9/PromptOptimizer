@@ -20,6 +20,7 @@ on:
 env:
   FLUTTER_VERSION: '3.24.0'
   JAVA_VERSION: '17'
+  DART_VERSION: '3.10.3'
 
 jobs:
   # 代码质量检查和测试（仅对分支推送和PR运行）
@@ -44,6 +45,7 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
           cache: true
+          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
@@ -81,6 +83,7 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
           cache: true
+          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
@@ -140,6 +143,7 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
           cache: true
+          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
@@ -182,6 +186,7 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
           cache: true
+          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
@@ -219,6 +224,7 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
           cache: true
+          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
@@ -256,6 +262,7 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
           cache: true
+          dart-version: ${{ env.DART_VERSION }}
           
       - name: Install dependencies
         run: flutter pub get
