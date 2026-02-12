@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../lib/features/optimization/domain/entities/optimization_state.dart';
 
 void main() {
   group('ResultPanel Cursor Tests', () {
