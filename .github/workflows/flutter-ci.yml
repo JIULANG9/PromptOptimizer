@@ -90,12 +90,14 @@ jobs:
       - name: Generate code
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Decode Keystore
+      - name: Decode and Validate Keystore
         if: github.event_name != 'pull_request'
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           echo "$KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+          # Verify keystore is readable and show info (without exposing sensitive data)
+          keytool -list -keystore android/app/upload-keystore.jks -storepass ${{ secrets.KEYSTORE_PASSWORD }} -v 2>&1 | head -20
 
       - name: Create key.properties
         if: github.event_name != 'pull_request'
@@ -104,17 +106,19 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
-          echo "storePassword=$KEYSTORE_PASSWORD" > android/key.properties
-          echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
-          echo "keyAlias=$KEY_ALIAS" >> android/key.properties
-          echo "storeFile=upload-keystore.jks" >> android/key.properties
+          cat > android/key.properties << EOF
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=app/upload-keystore.jks
+          EOF
 
       - name: Build APK (${{ matrix.arch }})
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            flutter build apk --debug --target-platform ${{ matrix.target }}
+            flutter build apk --debug --target-platform ${{ matrix.target }} --no-tree-shake-icons
           else
-            flutter build apk --release --target-platform ${{ matrix.target }}
+            flutter build apk --release --target-platform ${{ matrix.target }} --no-tree-shake-icons
           fi
 
       - name: Rename APK with version
@@ -164,12 +168,14 @@ jobs:
       - name: Generate code
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Decode Keystore
+      - name: Decode and Validate Keystore
         if: github.event_name != 'pull_request'
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           echo "$KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+          # Verify keystore is readable and show info
+          keytool -list -keystore android/app/upload-keystore.jks -storepass ${{ secrets.KEYSTORE_PASSWORD }} -v 2>&1 | head -20
 
       - name: Create key.properties
         if: github.event_name != 'pull_request'
@@ -178,17 +184,19 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
-          echo "storePassword=$KEYSTORE_PASSWORD" > android/key.properties
-          echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
-          echo "keyAlias=$KEY_ALIAS" >> android/key.properties
-          echo "storeFile=upload-keystore.jks" >> android/key.properties
+          cat > android/key.properties << EOF
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=app/upload-keystore.jks
+          EOF
 
       - name: Build AAB (App Bundle)
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            flutter build appbundle --debug
+            flutter build appbundle --debug --no-tree-shake-icons
           else
-            flutter build appbundle --release
+            flutter build appbundle --release --no-tree-shake-icons
           fi
 
       - name: Rename AAB with version
