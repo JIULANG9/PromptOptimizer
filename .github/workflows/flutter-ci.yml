@@ -317,3 +317,94 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # 自动创建版本 Tag 和 Release
+  create_tag_and_release:
+    name: Create Tag and Release
+    runs-on: ubuntu-latest
+    needs: [build_android, build_windows, build_linux, build_macos, build_ios, build_web]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整历史，用于检查 tag 是否存在
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          dart-version: ${{ env.DART_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Get version from pubspec.yaml
+        id: get_version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Found version: $VERSION"
+
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          TAG="v${{ steps.get_version.outputs.version }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Tag $TAG already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Tag $TAG does not exist"
+          fi
+
+      - name: Download all artifacts
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Tag
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          TAG="v${{ steps.get_version.outputs.version }}"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+      - name: Create Release
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{ steps.get_version.outputs.version }}"
+          name: "Release v${{ steps.get_version.outputs.version }}"
+          files: |
+            artifacts/android-apk/**/*.apk
+            artifacts/android-aab/**/*.aab
+            artifacts/windows-exe/**/*.exe
+            artifacts/linux-app/**
+            artifacts/macos-app/**/*.app
+            artifacts/ios-app/**/*.app
+            artifacts/web-app/**
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            ## 🚀 Prompt Optimizer v${{ steps.get_version.outputs.version }}
+            
+            ### 📱 下载链接
+            - **Android APK**: 适用于直接安装
+            - **Android AAB**: 适用于 Google Play 发布
+            - **Windows**: Windows 桌面应用
+            - **Linux**: Linux 桌面应用
+            - **macOS**: macOS 桌面应用
+            - **iOS**: iOS 应用（需要签名）
+            - **Web**: 在线版本
+            
+            ### ✨ 新特性
+            请查看 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) 了解详细更新内容。
+            
+            ### 📖 使用说明
+            详细使用说明请参考 [README.md](https://github.com/${{ github.repository }}/blob/main/README.md)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
