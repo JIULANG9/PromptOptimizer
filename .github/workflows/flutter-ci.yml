@@ -46,9 +46,97 @@ jobs:
       - name: Run tests
         run: flutter test
 
-  # Android 构建任务
+  # ==========================================
+  # Android 多架构构建
+  # ==========================================
   build_android:
-    name: Build Android
+    name: Build Android ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    needs: analyze
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    strategy:
+      matrix:
+        include:
+          - arch: arm64-v8a
+            target: android-arm64
+            output_name: android-arm64v8
+          - arch: armeabi-v7a
+            target: android-arm
+            output_name: android-arm32v7
+          - arch: x86_64
+            target: android-x64
+            output_name: android-x64
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          dart-version: ${{ env.DART_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Decode Keystore
+        if: github.event_name != 'pull_request'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+
+      - name: Create key.properties
+        if: github.event_name != 'pull_request'
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
+          echo "storePassword=$KEYSTORE_PASSWORD" > android/key.properties
+          echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
+          echo "keyAlias=$KEY_ALIAS" >> android/key.properties
+          echo "storeFile=upload-keystore.jks" >> android/key.properties
+
+      - name: Build APK (${{ matrix.arch }})
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            flutter build apk --debug --target-platform ${{ matrix.target }}
+          else
+            flutter build apk --release --target-platform ${{ matrix.target }}
+          fi
+
+      - name: Rename APK with version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            SOURCE="build/app/outputs/flutter-apk/app-debug.apk"
+          else
+            SOURCE="build/app/outputs/flutter-apk/app-release.apk"
+          fi
+          cp "$SOURCE" "prompt-optimizer-${VERSION}-${{ matrix.output_name }}.apk"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-${{ matrix.output_name }}
+          path: prompt-optimizer-*.apk
+          retention-days: 30
+
+  # Android AAB (Google Play 发布)
+  build_android_aab:
+    name: Build Android AAB (Google Play)
     runs-on: ubuntu-latest
     needs: analyze
     if: github.event_name == 'push' || github.event_name == 'pull_request'
@@ -76,28 +164,53 @@ jobs:
       - name: Generate code
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Build APK (debug for CI)
-        run: flutter build apk --debug
+      - name: Decode Keystore
+        if: github.event_name != 'pull_request'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
 
-      - name: Build AAB (debug for CI)
-        run: flutter build appbundle --debug
+      - name: Create key.properties
+        if: github.event_name != 'pull_request'
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
+          echo "storePassword=$KEYSTORE_PASSWORD" > android/key.properties
+          echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
+          echo "keyAlias=$KEY_ALIAS" >> android/key.properties
+          echo "storeFile=upload-keystore.jks" >> android/key.properties
 
-      - name: Upload APK artifacts
+      - name: Build AAB (App Bundle)
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            flutter build appbundle --debug
+          else
+            flutter build appbundle --release
+          fi
+
+      - name: Rename AAB with version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            SOURCE="build/app/outputs/bundle/debug/app-debug.aab"
+          else
+            SOURCE="build/app/outputs/bundle/release/app-release.aab"
+          fi
+          cp "$SOURCE" "prompt-optimizer-${VERSION}-android-google-play.aab"
+
+      - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
-          path: build/app/outputs/flutter-apk/app-*.apk
+          name: android-google-play
+          path: prompt-optimizer-*.aab
           retention-days: 30
 
-      - name: Upload AAB artifacts
-        if: github.event_name == 'push'
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-aab
-          path: build/app/outputs/bundle/release/app-release.aab
-          retention-days: 30
-
-  # Windows 构建任务
+  # ==========================================
+  # Windows 构建
+  # ==========================================
   build_windows:
     name: Build Windows
     runs-on: windows-latest
@@ -129,20 +242,21 @@ jobs:
             flutter build windows --release
           }
 
-      - name: Package Windows executable
+      - name: Package Windows
         run: |
+          $VERSION = (Select-String -Path pubspec.yaml -Pattern '^version:').Line.Split(' ')[1].Split('+')[0]
           if ('${{ github.event_name }}' -eq 'pull_request') {
-            cd build/windows/x64/runner/Debug
+            $source = "build/windows/x64/runner/Debug"
           } else {
-            cd build/windows/x64/runner/Release
+            $source = "build/windows/x64/runner/Release"
           }
-          7z a -tzip ../../../../windows-app.zip .
+          Compress-Archive -Path "$source\*" -DestinationPath "prompt-optimizer-$VERSION-windows-x86_64.zip" -Force
 
-      - name: Upload Windows artifacts
+      - name: Upload Windows
         uses: actions/upload-artifact@v4
         with:
-          name: windows-app
-          path: windows-app.zip
+          name: windows
+          path: prompt-optimizer-*.zip
           retention-days: 30
 
   # Linux 构建任务
@@ -182,20 +296,21 @@ jobs:
             flutter build linux --release
           fi
 
-      - name: Package Linux executable
+      - name: Package Linux
         run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            cd build/linux/x64/debug/bundle
+            SOURCE="build/linux/x64/debug/bundle"
           else
-            cd build/linux/x64/release/bundle
+            SOURCE="build/linux/x64/release/bundle"
           fi
-          tar -czf ../../../../linux-app.tar.gz .
+          tar -czf "prompt-optimizer-${VERSION}-linux-x86_64.tar.gz" -C "$SOURCE" .
 
-      - name: Upload Linux artifacts
+      - name: Upload Linux
         uses: actions/upload-artifact@v4
         with:
-          name: linux-app
-          path: linux-app.tar.gz
+          name: linux
+          path: prompt-optimizer-*.tar.gz
           retention-days: 30
 
   # macOS 构建任务
@@ -230,76 +345,27 @@ jobs:
             flutter build macos --release
           fi
 
-      - name: Package macOS app
+      - name: Package macOS
         run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            cd build/macos/Build/Products/Debug
+            SOURCE="build/macos/Build/Products/Debug"
           else
-            cd build/macos/Build/Products/Release
+            SOURCE="build/macos/Build/Products/Release"
           fi
-          tar -czf ../../../../macos-app.tar.gz .
+          cd "$SOURCE"
+          zip -r "../../../prompt-optimizer-${VERSION}-macos-universal.zip" *.app
 
-      - name: Upload macOS artifacts
+      - name: Upload macOS
         uses: actions/upload-artifact@v4
         with:
-          name: macos-app
-          path: macos-app.tar.gz
+          name: macos
+          path: prompt-optimizer-*.zip
           retention-days: 30
 
-  # iOS 构建任务 (仅在 macOS 上运行)
-  build_ios:
-    name: Build iOS
-    runs-on: macos-latest
-    needs: analyze
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          dart-version: ${{ env.DART_VERSION }}
-          channel: 'stable'
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Generate code
-        run: dart run build_runner build --delete-conflicting-outputs
-
-      - name: Install CocoaPods
-        run: |
-          cd ios
-          pod install
-
-      - name: Build iOS app
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            flutter build ios --debug --no-codesign
-          else
-            flutter build ios --release --no-codesign
-          fi
-
-      - name: Package iOS app
-        run: |
-          cd ios
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            tar -czf ios-app.tar.gz build/Build/Products/Debug-iphoneos/Runner.app
-          else
-            tar -czf ios-app.tar.gz build/Build/Products/Release-iphoneos/Runner.app
-          fi
-
-      - name: Upload iOS artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-app
-          path: ios/ios-app.tar.gz
-          retention-days: 30
-
-  # Web 构建任务
+  # ==========================================
+  # Web 构建
+  # ==========================================
   build_web:
     name: Build Web
     runs-on: ubuntu-latest
@@ -326,16 +392,17 @@ jobs:
       - name: Build Web app
         run: flutter build web
 
-      - name: Package Web app
+      - name: Package Web
         run: |
+          VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
           cd build/web
-          zip -r ../../web-app.zip .
+          zip -r "../../prompt-optimizer-${VERSION}-web.zip" .
 
-      - name: Upload Web artifacts
+      - name: Upload Web
         uses: actions/upload-artifact@v4
         with:
-          name: web-app
-          path: web-app.zip
+          name: web
+          path: prompt-optimizer-*.zip
           retention-days: 30
 
 
@@ -343,23 +410,15 @@ jobs:
   create_tag_and_release:
     name: Create Tag and Release
     runs-on: ubuntu-latest
-    needs: [build_android, build_windows, build_linux, build_macos, build_ios, build_web]
+    needs: [build_android, build_android_aab, build_windows, build_linux, build_macos, build_web]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 获取完整历史，用于检查 tag 是否存在
+          fetch-depth: 0
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          dart-version: ${{ env.DART_VERSION }}
-          channel: 'stable'
-          cache: true
-
-      - name: Get version from pubspec.yaml
+      - name: Get version
         id: get_version
         run: |
           VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
@@ -383,6 +442,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+          merge-multiple: true
+
+      - name: List artifacts
+        if: steps.check_tag.outputs.exists == 'false'
+        run: ls -la artifacts/
 
       - name: Create Tag
         if: steps.check_tag.outputs.exists == 'false'
@@ -398,33 +462,37 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: "v${{ steps.get_version.outputs.version }}"
-          name: "Release v${{ steps.get_version.outputs.version }}"
-          files: |
-            artifacts/android-apk/*
-            artifacts/android-aab/*
-            artifacts/windows-app/*
-            artifacts/linux-app/*
-            artifacts/macos-app/*
-            artifacts/ios-app/*
-            artifacts/web-app/*
+          name: "Prompt Optimizer v${{ steps.get_version.outputs.version }}"
+          files: artifacts/*
           draft: false
           prerelease: false
           generate_release_notes: true
           body: |
             ## 🚀 Prompt Optimizer v${{ steps.get_version.outputs.version }}
-            
+
             ### 📱 下载链接
-            - **Android APK**: 适用于直接安装
-            - **Android AAB**: 适用于 Google Play 发布
-            - **Windows**: Windows 桌面应用
-            - **Linux**: Linux 桌面应用
-            - **macOS**: macOS 桌面应用
-            - **iOS**: iOS 应用（需要签名）
-            - **Web**: 在线版本
-            
+
+            **Android:**
+            - `prompt-optimizer-*-android-arm64v8.apk` - ARM64 设备（推荐）
+            - `prompt-optimizer-*-android-arm32v7.apk` - ARM32 设备
+            - `prompt-optimizer-*-android-x64.apk` - x86_64 模拟器/设备
+            - `prompt-optimizer-*-android-google-play.aab` - Google Play 发布
+
+            **Windows:**
+            - `prompt-optimizer-*-windows-x86_64.zip` - Windows 便携版
+
+            **Linux:**
+            - `prompt-optimizer-*-linux-x86_64.tar.gz` - Linux 便携版
+
+            **macOS:**
+            - `prompt-optimizer-*-macos-universal.zip` - macOS 应用
+
+            **Web:**
+            - `prompt-optimizer-*-web.zip` - Web 部署文件
+
             ### ✨ 新特性
             请查看 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) 了解详细更新内容。
-            
+
             ### 📖 使用说明
             详细使用说明请参考 [README.md](https://github.com/${{ github.repository }}/blob/main/README.md)
         env:
