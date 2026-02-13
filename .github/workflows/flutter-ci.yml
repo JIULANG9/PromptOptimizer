@@ -8,6 +8,10 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write
+  actions: read
+
 env:
   FLUTTER_VERSION: '3.38.9'  # 使用稳定版本
   DART_VERSION: '3.10.8'  # 与项目要求 ^3.10.3 兼容
