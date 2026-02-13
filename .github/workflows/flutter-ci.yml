@@ -240,6 +240,26 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Setup iOS (if needed)
+        run: |
+          if [ ! -f "ios/Podfile" ]; then
+            cd ios
+            flutter precache --ios
+            pod init
+            echo 'platform :ios, "13.0"' >> Podfile
+            echo 'target "Runner" do' >> Podfile
+            echo '  use_frameworks!' >> Podfile
+            echo '  use_modular_headers!' >> Podfile
+            echo 'end' >> Podfile
+            cd ..
+          fi
+
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install --repo-update
+          cd ..
+
       - name: Generate code
         run: dart run build_runner build --delete-conflicting-outputs
 
@@ -285,11 +305,17 @@ jobs:
       - name: Build Web app
         run: flutter build web
 
+      - name: Compress Web app
+        run: |
+          cd build/web
+          tar -czf ../../web-app.tar.gz *
+          cd ../..
+
       - name: Upload Web artifacts
         uses: actions/upload-artifact@v4
         with:
           name: web-app
-          path: build/web/*
+          path: web-app.tar.gz
           retention-days: 30
 
 
@@ -360,7 +386,7 @@ jobs:
             artifacts/linux-app/*
             artifacts/macos-app/*
             artifacts/ios-app/*
-            artifacts/web-app/*
+            web-app.tar.gz
           draft: false
           prerelease: false
           generate_release_notes: true
