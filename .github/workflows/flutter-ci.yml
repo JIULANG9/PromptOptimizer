@@ -110,7 +110,7 @@ jobs:
           storePassword=$KEYSTORE_PASSWORD
           keyPassword=$KEY_PASSWORD
           keyAlias=$KEY_ALIAS
-          storeFile=app/prompt_optimization.jks
+          storeFile=prompt_optimization.jks
           EOF
 
       - name: Build APK (${{ matrix.arch }})
@@ -188,7 +188,7 @@ jobs:
           storePassword=$KEYSTORE_PASSWORD
           keyPassword=$KEY_PASSWORD
           keyAlias=$KEY_ALIAS
-          storeFile=app/prompt_optimization.jks
+          storeFile=prompt_optimization.jks
           EOF
 
       - name: Build AAB (App Bundle)
