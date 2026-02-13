@@ -129,11 +129,19 @@ jobs:
             flutter build windows --release
           }
 
+      - name: Package Windows
+        if: github.event_name == 'push'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path build/windows/runner/Release/* -DestinationPath build/windows/prompt_optimizer_windows.zip
+
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-exe
-          path: build/windows/runner/Release/*.exe
+          path: |
+            build/windows/runner/Release/*.exe
+            build/windows/*.zip
           retention-days: 30
 
   # Linux 构建任务
@@ -173,11 +181,21 @@ jobs:
             flutter build linux --release
           fi
 
+      - name: Package Linux (Debian)
+        if: github.event_name == 'push'
+        run: |
+          # 简单创建 deb 结构，实际复杂应用建议使用 flutter_to_debian 插件
+          # 这里先上传编译好的 bundle 目录，并改名为更友好的名称
+          cd build/linux/x64/release/
+          tar -czvf ../../../prompt_optimizer_linux.tar.gz bundle/
+
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-app
-          path: build/linux/*/release/bundle/*
+          path: |
+            build/linux/*/release/bundle/*
+            *.tar.gz
           retention-days: 30
 
   # macOS 构建任务
@@ -212,11 +230,19 @@ jobs:
             flutter build macos --release
           fi
 
+      - name: Package macOS
+        if: github.event_name == 'push'
+        run: |
+          cd build/macos/Build/Products/Release/
+          zip -r ../../../../prompt_optimizer_macos.zip *.app
+
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
         with:
           name: macos-app
-          path: build/macos/Build/Products/Release/*.app
+          path: |
+            build/macos/Build/Products/Release/*.app
+            *.zip
           retention-days: 30
 
   # iOS 构建任务 (仅在 macOS 上运行)
@@ -239,26 +265,6 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Setup iOS (if needed)
-        run: |
-          if [ ! -f "ios/Podfile" ]; then
-            cd ios
-            flutter precache --ios
-            pod init
-            echo 'platform :ios, "13.0"' >> Podfile
-            echo 'target "Runner" do' >> Podfile
-            echo '  use_frameworks!' >> Podfile
-            echo '  use_modular_headers!' >> Podfile
-            echo 'end' >> Podfile
-            cd ..
-          fi
-
-      - name: Install CocoaPods
-        run: |
-          cd ios
-          pod install --repo-update
-          cd ..
 
       - name: Generate code
         run: dart run build_runner build --delete-conflicting-outputs
@@ -305,17 +311,19 @@ jobs:
       - name: Build Web app
         run: flutter build web
 
-      - name: Compress Web app
+      - name: Package Web
+        if: github.event_name == 'push'
         run: |
           cd build/web
-          tar -czf ../../web-app.tar.gz *
-          cd ../..
+          zip -r ../../prompt_optimizer_web.zip .
 
       - name: Upload Web artifacts
         uses: actions/upload-artifact@v4
         with:
           name: web-app
-          path: web-app.tar.gz
+          path: |
+            build/web/*
+            *.zip
           retention-days: 30
 
 
@@ -380,13 +388,12 @@ jobs:
           tag_name: "v${{ steps.get_version.outputs.version }}"
           name: "Release v${{ steps.get_version.outputs.version }}"
           files: |
-            artifacts/android-apk/*
-            artifacts/android-aab/*
-            artifacts/windows-exe/*
-            artifacts/linux-app/*
-            artifacts/macos-app/*
-            artifacts/ios-app/*
-            web-app.tar.gz
+            artifacts/android-apk/*.apk
+            artifacts/android-aab/*.aab
+            artifacts/windows-exe/*.zip
+            artifacts/linux-app/*.tar.gz
+            artifacts/macos-app/*.zip
+            artifacts/web-app/*.zip
           draft: false
           prerelease: false
           generate_release_notes: true
