@@ -87,8 +87,19 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           set -euo pipefail
-          printf '%s' "$KEYSTORE_BASE64" | tr -d '\n\r ' | base64 --decode > android/app/prompt_optimization.jks
-          keytool -list -keystore android/app/prompt_optimization.jks -storepass ${{ secrets.KEYSTORE_PASSWORD }} -v 2>&1 | head -20
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "Error: KEYSTORE_BASE64 secret is not set."
+            exit 1
+          fi
+          mkdir -p android/app/sign
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/sign/prompt_optimization.jks
+          
+          # Verify keystore
+          if [ ! -s android/app/sign/prompt_optimization.jks ]; then
+            echo "Error: Keystore file is empty after decoding."
+            exit 1
+          fi
+          keytool -list -keystore android/app/sign/prompt_optimization.jks -storepass ${{ secrets.KEYSTORE_PASSWORD }} -v 2>&1 | head -20
 
       - name: Create key.properties (Android)
         if: matrix.target == 'android'
@@ -101,7 +112,7 @@ jobs:
           storePassword=$KEYSTORE_PASSWORD
           keyPassword=$KEY_PASSWORD
           keyAlias=$KEY_ALIAS
-          storeFile=prompt_optimization.jks
+          storeFile=sign/prompt_optimization.jks
           EOF
 
       - name: Install Linux dependencies

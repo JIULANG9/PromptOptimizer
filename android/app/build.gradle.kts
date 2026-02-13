@@ -28,11 +28,20 @@ android {
 
     signingConfigs {
         if (keystorePropertiesFile.exists()) {
-            create("release") {
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-                storeFile = file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
+            val keyAliasStr = keystoreProperties.getProperty("keyAlias")
+            val keyPasswordStr = keystoreProperties.getProperty("keyPassword")
+            val storeFileStr = keystoreProperties.getProperty("storeFile")
+            val storePasswordStr = keystoreProperties.getProperty("storePassword")
+
+            if (keyAliasStr != null && keyPasswordStr != null && storeFileStr != null && storePasswordStr != null) {
+                create("release") {
+                    keyAlias = keyAliasStr
+                    keyPassword = keyPasswordStr
+                    storeFile = file(storeFileStr)
+                    storePassword = storePasswordStr
+                }
+            } else {
+                println("Warning: key.properties exists but some properties are missing. Skipping release signing config.")
             }
         }
     }
