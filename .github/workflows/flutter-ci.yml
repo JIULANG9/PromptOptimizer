@@ -129,19 +129,11 @@ jobs:
             flutter build windows --release
           }
 
-      - name: Package Windows
-        if: github.event_name == 'push'
-        shell: pwsh
-        run: |
-          Compress-Archive -Path build/windows/runner/Release/* -DestinationPath build/windows/prompt_optimizer_windows.zip
-
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-exe
-          path: |
-            build/windows/runner/Release/*.exe
-            build/windows/*.zip
+          path: build/windows/runner/Release/*.exe
           retention-days: 30
 
   # Linux 构建任务
@@ -181,13 +173,24 @@ jobs:
             flutter build linux --release
           fi
 
-      - name: Package Linux (Debian)
+      - name: Create DEB package
         if: github.event_name == 'push'
         run: |
-          # 简单创建 deb 结构，实际复杂应用建议使用 flutter_to_debian 插件
-          # 这里先上传编译好的 bundle 目录，并改名为更友好的名称
-          cd build/linux/x64/release/
-          tar -czvf ../../../prompt_optimizer_linux.tar.gz bundle/
+          sudo apt-get install -y dpkg-dev
+          mkdir -p prompt-optimizer-linux/DEBIAN
+          mkdir -p prompt-optimizer-linux/opt/prompt-optimizer
+          cp -r build/linux/*/release/bundle/* prompt-optimizer-linux/opt/prompt-optimizer/
+          cat > prompt-optimizer-linux/DEBIAN/control << EOF
+Package: prompt-optimizer
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: libgtk-3-0, libglib2.0-0, libpango-1.0-0, libharfbuzz0b, libpangoft2-1.0-0, libpangocairo-1.0-0, libatk1.0-0, libcairo-gobject2, libgtk-3-0, libgdk-pixbuf2.0-0
+Maintainer: Prompt Optimizer Team
+Description: Prompt Optimizer - A cross-platform AI prompt optimization tool
+EOF
+          dpkg-deb --build prompt-optimizer-linux
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
@@ -195,7 +198,7 @@ jobs:
           name: linux-app
           path: |
             build/linux/*/release/bundle/*
-            *.tar.gz
+            prompt-optimizer-linux.deb
           retention-days: 30
 
   # macOS 构建任务
@@ -230,11 +233,12 @@ jobs:
             flutter build macos --release
           fi
 
-      - name: Package macOS
+      - name: Create DMG package
         if: github.event_name == 'push'
         run: |
-          cd build/macos/Build/Products/Release/
-          zip -r ../../../../prompt_optimizer_macos.zip *.app
+          mkdir -p dmg-content
+          cp -R build/macos/Build/Products/Release/*.app dmg-content/
+          hdiutil create -volname "Prompt Optimizer" -srcfolder dmg-content -ov -format UDZO prompt-optimizer-macos.dmg
 
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
@@ -242,7 +246,7 @@ jobs:
           name: macos-app
           path: |
             build/macos/Build/Products/Release/*.app
-            *.zip
+            prompt-optimizer-macos.dmg
           retention-days: 30
 
   # iOS 构建任务 (仅在 macOS 上运行)
@@ -269,6 +273,11 @@ jobs:
       - name: Generate code
         run: dart run build_runner build --delete-conflicting-outputs
 
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install
+
       - name: Build iOS app
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -277,11 +286,27 @@ jobs:
             flutter build ios --release --no-codesign
           fi
 
+      - name: Create iOS IPA
+        if: github.event_name == 'push'
+        run: |
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Release -destination generic/platform=iOS -archivePath build/Runner.xcarchive archive
+          xcodebuild -exportArchive -archivePath build/Runner.xcarchive -exportPath build/Runner -exportOptionsPlist ExportOptions.plist
+          cd ..
+          mkdir -p build/ios-release
+          cp ios/build/Runner/*.ipa build/ios-release/ || echo "IPA creation failed, using .app bundle"
+          if [ ! -f build/ios-release/*.ipa ]; then
+            cp -r build/ios/iphoneos/*.app build/ios-release/
+          fi
+
       - name: Upload iOS artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ios-app
-          path: build/ios/iphoneos/*.app
+          path: |
+            build/ios/iphoneos/*.app
+            build/ios-release/*.ipa
+            build/ios-release/*.app
           retention-days: 30
 
   # Web 构建任务
@@ -311,19 +336,18 @@ jobs:
       - name: Build Web app
         run: flutter build web
 
-      - name: Package Web
-        if: github.event_name == 'push'
+      - name: Create Web ZIP package
         run: |
           cd build/web
-          zip -r ../../prompt_optimizer_web.zip .
+          zip -r ../../prompt-optimizer-web.zip .
+          cd ../..
 
       - name: Upload Web artifacts
         uses: actions/upload-artifact@v4
         with:
           name: web-app
           path: |
-            build/web/*
-            *.zip
+            prompt-optimizer-web.zip
           retention-days: 30
 
 
@@ -388,12 +412,13 @@ jobs:
           tag_name: "v${{ steps.get_version.outputs.version }}"
           name: "Release v${{ steps.get_version.outputs.version }}"
           files: |
-            artifacts/android-apk/*.apk
-            artifacts/android-aab/*.aab
-            artifacts/windows-exe/*.zip
-            artifacts/linux-app/*.tar.gz
-            artifacts/macos-app/*.zip
-            artifacts/web-app/*.zip
+            artifacts/android-apk/*
+            artifacts/android-aab/*
+            artifacts/windows-exe/*
+            artifacts/linux-app/*
+            artifacts/macos-app/*
+            artifacts/ios-app/*
+            artifacts/web-app/*
           draft: false
           prerelease: false
           generate_release_notes: true
