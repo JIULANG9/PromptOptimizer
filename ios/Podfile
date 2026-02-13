@@ -2,18 +2,16 @@
 platform :ios, '13.0'
 
 # CocoaPods analytics sends network requests to Google Analytics.
-# To see the data sent to Google, open:
-#   /opt/homebrew/Cellar/cocoapods/1.11.3/libexec/gems/cocoapods-1.11.3/lib/cocoapods/installer/analytics.rb
-# To disable this, uncomment:
+# To disable this, uncomment the following line.
 # ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
-prepare_command do
-  # Workaround for Flutter 3.x compatibility
-  system('rm -rf Pods/.symlinks')
-  system('rm -rf Pods/Manifest.lock')
-end
+# Uncomment this line if you're using Swift or would like to use dynamic frameworks
+use_frameworks!
 
-def parse_KV_file(file, separator='=')
+# Prevents Cocoapods from embedding a duplicate Pods framework in the Podfile
+install! 'cocoapods', :deterministic_uuids => false
+
+def parse_KV_file(file, separator = '=')
   file_abs_path = File.expand_path(file)
   if !File.exists? file_abs_path
     return [];
@@ -21,14 +19,19 @@ def parse_KV_file(file, separator='=')
   generated_key_values = {}
   skip_line_start_symbols = ["#", "/"]
   File.foreach(file_abs_path) do |line|
-    next if skip_line_start_symbols.any? { |symbol| line.start_with?(symbol) }
-    separator_index = line.index(separator)
-    if separator_index.nil?
-      next
+    next if skip_line_start_symbols.any? { |symbol| line =~ /^\s*#{symbol}/ }
+    plugin = line.split(pattern=separator)
+    if plugin.length == 2
+      podname = plugin[0].strip()
+      path = plugin[1].strip()
+      if path.length > 0
+        generated_key_values[podname] = path
+      else
+        puts "Invalid plugin specification: `#{line}`"
+      end
+    else
+      puts "Invalid plugin specification: `#{line}`"
     end
-    key = line[0..separator_index-1].strip
-    value = line[separator_index+1..-1].strip
-    generated_key_values[key] = value
   end
   generated_key_values
 end
