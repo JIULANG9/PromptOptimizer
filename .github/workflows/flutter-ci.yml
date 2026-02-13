@@ -95,9 +95,9 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          echo "$KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/prompt_optimization.jks
           # Verify keystore is readable and show info (without exposing sensitive data)
-          keytool -list -keystore android/app/upload-keystore.jks -storepass ${{ secrets.KEYSTORE_PASSWORD }} -v 2>&1 | head -20
+          keytool -list -keystore android/app/prompt_optimization.jks -storepass ${{ secrets.KEYSTORE_PASSWORD }} -v 2>&1 | head -20
 
       - name: Create key.properties
         if: github.event_name != 'pull_request'
@@ -110,7 +110,7 @@ jobs:
           storePassword=$KEYSTORE_PASSWORD
           keyPassword=$KEY_PASSWORD
           keyAlias=$KEY_ALIAS
-          storeFile=app/upload-keystore.jks
+          storeFile=app/prompt_optimization.jks
           EOF
 
       - name: Build APK (${{ matrix.arch }})
@@ -173,9 +173,9 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          echo "$KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/prompt_optimization.jks
           # Verify keystore is readable and show info
-          keytool -list -keystore android/app/upload-keystore.jks -storepass ${{ secrets.KEYSTORE_PASSWORD }} -v 2>&1 | head -20
+          keytool -list -keystore android/app/prompt_optimization.jks -storepass ${{ secrets.KEYSTORE_PASSWORD }} -v 2>&1 | head -20
 
       - name: Create key.properties
         if: github.event_name != 'pull_request'
@@ -188,7 +188,7 @@ jobs:
           storePassword=$KEYSTORE_PASSWORD
           keyPassword=$KEY_PASSWORD
           keyAlias=$KEY_ALIAS
-          storeFile=app/upload-keystore.jks
+          storeFile=app/prompt_optimization.jks
           EOF
 
       - name: Build AAB (App Bundle)
