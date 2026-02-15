@@ -74,6 +74,20 @@ class _ProviderTile extends StatelessWidget {
         return Icons.hub_outlined;
       case ModelProvider.openAI:
         return Icons.auto_awesome_outlined;
+      case ModelProvider.deepSeek:
+        return Icons.psychology_outlined;
+      case ModelProvider.moonshot:
+        return Icons.nightlight_outlined;
+      case ModelProvider.zhipu:
+        return Icons.smart_toy_outlined;
+      case ModelProvider.jiulang:
+        return Icons.rocket_launch_outlined;
+      case ModelProvider.baidu:
+        return Icons.chat_outlined;
+      case ModelProvider.tencent:
+        return Icons.business_outlined;
+      case ModelProvider.openRouter:
+        return Icons.route_outlined;
     }
   }
 

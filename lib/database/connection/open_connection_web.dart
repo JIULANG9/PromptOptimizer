@@ -1,12 +1,12 @@
 import 'package:drift/drift.dart';
-import 'package:drift/wasm.dart';
+import 'package:drift_flutter/drift_flutter.dart';
 
 Future<QueryExecutor> openExecutor() async {
-  final result = await WasmDatabase.open(
-    databaseName: 'prompt_optimizer',
-    sqlite3Uri: Uri.parse('sqlite3.wasm'),
-    driftWorkerUri: Uri.parse('drift_worker.dart.js'),
+  return driftDatabase(
+    name: 'prompt_optimizer',
+    web: DriftWebOptions(
+      sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+      driftWorker: Uri.parse('drift_worker.dart.js'),
+    ),
   );
-
-  return result.resolvedExecutor;
 }

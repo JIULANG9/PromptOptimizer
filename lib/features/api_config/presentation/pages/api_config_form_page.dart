@@ -54,6 +54,9 @@ class _ApiConfigFormPageState extends ConsumerState<ApiConfigFormPage> {
     super.initState();
     _isEditing = widget.configId != null;
 
+    // 监听 baseUrl 输入框变化，实现智能匹配
+    _baseUrlController.addListener(_onBaseUrlChanged);
+
     if (_isEditing) {
       // 加载现有配置数据
       _loadExistingConfig();
@@ -80,12 +83,32 @@ class _ApiConfigFormPageState extends ConsumerState<ApiConfigFormPage> {
 
   @override
   void dispose() {
+    _baseUrlController.removeListener(_onBaseUrlChanged);
     _nameController.dispose();
     _apiKeyController.dispose();
     _baseUrlController.dispose();
     _modelIdController.dispose();
     _modelIdFocusNode.dispose();
     super.dispose();
+  }
+
+  /// 监听 baseUrl 变化，智能匹配模型提供商
+  void _onBaseUrlChanged() {
+    final url = _baseUrlController.text.trim();
+    if (url.isEmpty) {
+      if (_selectedProvider != null) {
+        setState(() => _selectedProvider = null);
+      }
+      return;
+    }
+
+    final matched = ModelProvider.matchFromUrl(url);
+    if (matched != null && matched != _selectedProvider) {
+      setState(() {
+        _selectedProvider = matched;
+        _modelList = []; // 切换提供商时清空已加载的模型列表
+      });
+    }
   }
 
   @override
@@ -182,10 +205,19 @@ class _ApiConfigFormPageState extends ConsumerState<ApiConfigFormPage> {
                   ),
                 const SizedBox(height: 16),
 
-                // Base URL
+                // Base URL（带智能匹配提示）
                 TextFormField(
                   controller: _baseUrlController,
-                  decoration: InputDecoration(labelText: l10n.apiConfigBaseUrl),
+                  decoration: InputDecoration(
+                    labelText: l10n.apiConfigBaseUrl,
+                    helperText: _selectedProvider != null
+                        ? '✓ 已匹配: ${_selectedProvider!.displayName}'
+                        : null,
+                    helperStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 12,
+                    ),
+                  ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return l10n.errorBaseUrlRequired;

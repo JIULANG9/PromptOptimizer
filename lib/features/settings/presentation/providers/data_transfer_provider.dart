@@ -19,12 +19,17 @@ final dataTransferRepositoryProvider = Provider<DataTransferRepository>((ref) {
     ref.watch(historyDaoProvider),
     ref.watch(settingsRepositoryProvider),
   );
-});
+}, dependencies: [
+  apiConfigDaoProvider,
+  templateDaoProvider,
+  historyDaoProvider,
+  settingsRepositoryProvider,
+]);
 
 /// 数据传输 UseCase Provider
 final dataTransferUseCasesProvider = Provider<DataTransferUseCases>((ref) {
   return DataTransferUseCases(ref.watch(dataTransferRepositoryProvider));
-});
+}, dependencies: [dataTransferRepositoryProvider]);
 
 /// 数据传输状态 Notifier（MVI Intent 处理器）
 /// 管理导入导出的异步状态，导入成功后刷新所有相关 Provider
@@ -73,4 +78,4 @@ class DataTransferNotifier extends StateNotifier<DataTransferStatus> {
 final dataTransferProvider =
     StateNotifierProvider<DataTransferNotifier, DataTransferStatus>((ref) {
       return DataTransferNotifier(ref.watch(dataTransferUseCasesProvider), ref);
-    });
+    }, dependencies: [dataTransferUseCasesProvider]);
