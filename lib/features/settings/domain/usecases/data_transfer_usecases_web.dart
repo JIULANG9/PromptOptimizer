@@ -1,5 +1,5 @@
+// ignore_for_file: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:convert';
-// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
 import 'package:file_picker/file_picker.dart';
@@ -20,12 +20,11 @@ class DataTransferUseCases {
     final fileName = _generateFileName();
 
     // 创建 Blob 对象
-    final bytes = utf8.encode(jsonString);
-    final blob = html.Blob([bytes], 'application/json');
+    final blob = html.Blob([jsonString], 'application/json');
 
     // 创建下载链接
     final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url)
+    html.AnchorElement(href: url)
       ..setAttribute('download', fileName)
       ..click();
 

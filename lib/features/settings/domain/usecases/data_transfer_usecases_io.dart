@@ -27,6 +27,7 @@ class DataTransferUseCases {
       final tempFile = File(p.join(tempDir.path, fileName));
       await tempFile.writeAsString(jsonString, flush: true);
 
+      // ignore: deprecated_member_use
       await Share.shareXFiles([
         XFile(tempFile.path),
       ], subject: 'Prompt Optimizer Backup');
