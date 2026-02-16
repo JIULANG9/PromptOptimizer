@@ -162,5 +162,26 @@
   "btnSaveQrCode": "保存二维码",
 
   "promptInputHint": "在此输入或粘贴您的提示词...",
-  "optimizedResultHint": "优化结果将在此显示..."
+  "optimizedResultHint": "优化结果将在此显示...",
+
+  "onboardingProblemTitle": "你的提示词",
+  "onboardingProblemPrompt": "请为一款【智能便携保温杯】写文案,要吸引人一点。",
+  "onboardingProblemTag1": "需求模糊",
+  "onboardingProblemTag1Desc": "未指定平台/人群",
+  "onboardingProblemTag2": "卖点缺失",
+  "onboardingProblemTag2Desc": "未突出核心优势",
+  "onboardingProblemTag3": "长度失控",
+  "onboardingProblemTag3Desc": "无字数限制",
+  "onboardingUpgradeButton": "提示词优化",
+  "onboardingResultTitle": "优化后文案",
+  "onboardingOptimizedPrompt": "请为一款【智能便携保温杯】撰写 3 条适合短视频的爆款推广文案，要求：\n  - 风格年轻化、有画面感、口语化\n  - 突出 24 小时长效保温、轻便防漏、颜值高三大卖点\n  - 每条控制在 90 字以内，自带情绪钩子，适合直接发布",
+  "onboardingProgress1": "24小时长效保温",
+  "onboardingProgress2": "轻便防漏",
+  "onboardingProgress3": "颜值高",
+  "onboardingVideoPlatform1": "抖音",
+  "onboardingVideoText1": "24h恒温锁鲜!轻到能放包里,颜值高到被追着问链接🔥",
+  "onboardingVideoPlatform2": "小红书",
+  "onboardingVideoText2": "救命!这个保温杯让我爱上喝水✨ 24h保温+高颜值",
+  "onboardingCtaUserCount": "已有 6396 位用户用它提升文案转化率",
+  "onboardingCtaButton": "开始体验"
 }

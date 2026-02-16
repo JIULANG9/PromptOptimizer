@@ -389,4 +389,65 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get optimizedResultHint => '优化结果将在此显示...';
+
+  @override
+  String get onboardingProblemTitle => '你的提示词';
+
+  @override
+  String get onboardingProblemPrompt => '请为一款【智能便携保温杯】写文案,要吸引人一点。';
+
+  @override
+  String get onboardingProblemTag1 => '需求模糊';
+
+  @override
+  String get onboardingProblemTag1Desc => '未指定平台/人群';
+
+  @override
+  String get onboardingProblemTag2 => '卖点缺失';
+
+  @override
+  String get onboardingProblemTag2Desc => '未突出核心优势';
+
+  @override
+  String get onboardingProblemTag3 => '长度失控';
+
+  @override
+  String get onboardingProblemTag3Desc => '无字数限制';
+
+  @override
+  String get onboardingUpgradeButton => '提示词优化';
+
+  @override
+  String get onboardingResultTitle => '优化后文案';
+
+  @override
+  String get onboardingOptimizedPrompt =>
+      '请为一款【智能便携保温杯】撰写 3 条适合短视频的爆款推广文案，要求：\n  - 风格年轻化、有画面感、口语化\n  - 突出 24 小时长效保温、轻便防漏、颜值高三大卖点\n  - 每条控制在 90 字以内，自带情绪钩子，适合直接发布';
+
+  @override
+  String get onboardingProgress1 => '24小时长效保温';
+
+  @override
+  String get onboardingProgress2 => '轻便防漏';
+
+  @override
+  String get onboardingProgress3 => '颜值高';
+
+  @override
+  String get onboardingVideoPlatform1 => '抖音';
+
+  @override
+  String get onboardingVideoText1 => '24h恒温锁鲜!轻到能放包里,颜值高到被追着问链接🔥';
+
+  @override
+  String get onboardingVideoPlatform2 => '小红书';
+
+  @override
+  String get onboardingVideoText2 => '救命!这个保温杯让我爱上喝水✨ 24h保温+高颜值';
+
+  @override
+  String get onboardingCtaUserCount => '已有 6396 位用户用它提升文案转化率';
+
+  @override
+  String get onboardingCtaButton => '开始体验';
 }

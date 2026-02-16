@@ -15,6 +15,7 @@ import '../widgets/control_panel.dart';
 import '../widgets/prompt_input.dart';
 import '../widgets/prompt_tab_bar.dart';
 import '../widgets/result_panel.dart';
+import '../widgets/onboarding_bottom_sheet.dart';
 import '../../../widgets/animation/delayed_entrance.dart';
 
 /// 首页 — 应用主界面
@@ -46,8 +47,13 @@ class _HomePageState extends ConsumerState<HomePage>
       vsync: this,
       duration: const Duration(milliseconds: _totalDurationMs),
     );
-    // 页面首次进入时自动触发，仅播放一次
+    // 页面首次进入时自动触发,仅播放一次
     _entranceController.forward();
+    
+    // 延迟显示引导弹窗
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      OnboardingBottomSheet.showIfNeeded(context);
+    });
   }
 
   @override

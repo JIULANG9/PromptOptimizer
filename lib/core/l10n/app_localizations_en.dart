@@ -397,5 +397,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String get promptInputHint => 'Enter or paste your prompt here...';
 
   @override
-  String get optimizedResultHint => 'Optimized result will appear here...';
+  String get optimizedResultHint =>
+      'Optimized result will be displayed here...';
+
+  @override
+  String get onboardingProblemTitle => 'Your Prompt';
+
+  @override
+  String get onboardingProblemPrompt =>
+      'Write a copy for a [Smart Portable Thermos], make it attractive.';
+
+  @override
+  String get onboardingProblemTag1 => 'Vague Requirements';
+
+  @override
+  String get onboardingProblemTag1Desc => 'No platform/audience specified';
+
+  @override
+  String get onboardingProblemTag2 => 'Missing Selling Points';
+
+  @override
+  String get onboardingProblemTag2Desc => 'Core advantages not highlighted';
+
+  @override
+  String get onboardingProblemTag3 => 'Length Uncontrolled';
+
+  @override
+  String get onboardingProblemTag3Desc => 'No word limit';
+
+  @override
+  String get onboardingUpgradeButton => 'Optimize Prompt';
+
+  @override
+  String get onboardingResultTitle => 'Optimized Copy';
+
+  @override
+  String get onboardingOptimizedPrompt =>
+      'Write 3 viral promotional copies for a [Smart Portable Thermos] suitable for short videos, requirements:\n  - Youthful, visual, and conversational style\n  - Highlight three key features: 24-hour insulation, lightweight & leak-proof, high aesthetics\n  - Each within 90 words, with emotional hooks, ready to publish';
+
+  @override
+  String get onboardingProgress1 => '24h Insulation';
+
+  @override
+  String get onboardingProgress2 => 'Lightweight & Leak-proof';
+
+  @override
+  String get onboardingProgress3 => 'High Aesthetics';
+
+  @override
+  String get onboardingVideoPlatform1 => 'TikTok';
+
+  @override
+  String get onboardingVideoText1 =>
+      '24h constant temp! Light enough for your bag, so pretty people ask for the link';
+
+  @override
+  String get onboardingVideoPlatform2 => 'Instagram';
+
+  @override
+  String get onboardingVideoText2 =>
+      'OMG! This thermos made me love drinking water  24h insulation + gorgeous design';
+
+  @override
+  String get onboardingCtaUserCount =>
+      '6396 users have improved their copy conversion rate with it';
+
+  @override
+  String get onboardingCtaButton => 'Get Started';
 }

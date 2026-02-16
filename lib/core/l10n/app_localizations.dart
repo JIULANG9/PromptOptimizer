@@ -839,8 +839,128 @@ abstract class AppLocalizations {
   /// No description provided for @optimizedResultHint.
   ///
   /// In en, this message translates to:
-  /// **'Optimized result will appear here...'**
+  /// **'Optimized result will be displayed here...'**
   String get optimizedResultHint;
+
+  /// No description provided for @onboardingProblemTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Prompt'**
+  String get onboardingProblemTitle;
+
+  /// No description provided for @onboardingProblemPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a copy for a [Smart Portable Thermos], make it attractive.'**
+  String get onboardingProblemPrompt;
+
+  /// No description provided for @onboardingProblemTag1.
+  ///
+  /// In en, this message translates to:
+  /// **'Vague Requirements'**
+  String get onboardingProblemTag1;
+
+  /// No description provided for @onboardingProblemTag1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'No platform/audience specified'**
+  String get onboardingProblemTag1Desc;
+
+  /// No description provided for @onboardingProblemTag2.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing Selling Points'**
+  String get onboardingProblemTag2;
+
+  /// No description provided for @onboardingProblemTag2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Core advantages not highlighted'**
+  String get onboardingProblemTag2Desc;
+
+  /// No description provided for @onboardingProblemTag3.
+  ///
+  /// In en, this message translates to:
+  /// **'Length Uncontrolled'**
+  String get onboardingProblemTag3;
+
+  /// No description provided for @onboardingProblemTag3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'No word limit'**
+  String get onboardingProblemTag3Desc;
+
+  /// No description provided for @onboardingUpgradeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimize Prompt'**
+  String get onboardingUpgradeButton;
+
+  /// No description provided for @onboardingResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimized Copy'**
+  String get onboardingResultTitle;
+
+  /// No description provided for @onboardingOptimizedPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Write 3 viral promotional copies for a [Smart Portable Thermos] suitable for short videos, requirements:\n  - Youthful, visual, and conversational style\n  - Highlight three key features: 24-hour insulation, lightweight & leak-proof, high aesthetics\n  - Each within 90 words, with emotional hooks, ready to publish'**
+  String get onboardingOptimizedPrompt;
+
+  /// No description provided for @onboardingProgress1.
+  ///
+  /// In en, this message translates to:
+  /// **'24h Insulation'**
+  String get onboardingProgress1;
+
+  /// No description provided for @onboardingProgress2.
+  ///
+  /// In en, this message translates to:
+  /// **'Lightweight & Leak-proof'**
+  String get onboardingProgress2;
+
+  /// No description provided for @onboardingProgress3.
+  ///
+  /// In en, this message translates to:
+  /// **'High Aesthetics'**
+  String get onboardingProgress3;
+
+  /// No description provided for @onboardingVideoPlatform1.
+  ///
+  /// In en, this message translates to:
+  /// **'TikTok'**
+  String get onboardingVideoPlatform1;
+
+  /// No description provided for @onboardingVideoText1.
+  ///
+  /// In en, this message translates to:
+  /// **'24h constant temp! Light enough for your bag, so pretty people ask for the link'**
+  String get onboardingVideoText1;
+
+  /// No description provided for @onboardingVideoPlatform2.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram'**
+  String get onboardingVideoPlatform2;
+
+  /// No description provided for @onboardingVideoText2.
+  ///
+  /// In en, this message translates to:
+  /// **'OMG! This thermos made me love drinking water  24h insulation + gorgeous design'**
+  String get onboardingVideoText2;
+
+  /// No description provided for @onboardingCtaUserCount.
+  ///
+  /// In en, this message translates to:
+  /// **'6396 users have improved their copy conversion rate with it'**
+  String get onboardingCtaUserCount;
+
+  /// No description provided for @onboardingCtaButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get onboardingCtaButton;
 }
 
 class _AppLocalizationsDelegate

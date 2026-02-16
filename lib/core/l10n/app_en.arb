@@ -162,5 +162,26 @@
   "btnSaveQrCode": "Save QR Code",
 
   "promptInputHint": "Enter or paste your prompt here...",
-  "optimizedResultHint": "Optimized result will appear here..."
+  "optimizedResultHint": "Optimized result will be displayed here...",
+
+  "onboardingProblemTitle": "Your Prompt",
+  "onboardingProblemPrompt": "Write a copy for a [Smart Portable Thermos], make it attractive.",
+  "onboardingProblemTag1": "Vague Requirements",
+  "onboardingProblemTag1Desc": "No platform/audience specified",
+  "onboardingProblemTag2": "Missing Selling Points",
+  "onboardingProblemTag2Desc": "Core advantages not highlighted",
+  "onboardingProblemTag3": "Length Uncontrolled",
+  "onboardingProblemTag3Desc": "No word limit",
+  "onboardingUpgradeButton": "Optimize Prompt",
+  "onboardingResultTitle": "Optimized Copy",
+  "onboardingOptimizedPrompt": "Write 3 viral promotional copies for a [Smart Portable Thermos] suitable for short videos, requirements:\n  - Youthful, visual, and conversational style\n  - Highlight three key features: 24-hour insulation, lightweight & leak-proof, high aesthetics\n  - Each within 90 words, with emotional hooks, ready to publish",
+  "onboardingProgress1": "24h Insulation",
+  "onboardingProgress2": "Lightweight & Leak-proof",
+  "onboardingProgress3": "High Aesthetics",
+  "onboardingVideoPlatform1": "TikTok",
+  "onboardingVideoText1": "24h constant temp! Light enough for your bag, so pretty people ask for the link",
+  "onboardingVideoPlatform2": "Instagram",
+  "onboardingVideoText2": "OMG! This thermos made me love drinking water  24h insulation + gorgeous design",
+  "onboardingCtaUserCount": "6396 users have improved their copy conversion rate with it",
+  "onboardingCtaButton": "Get Started"
 }
