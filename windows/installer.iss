@@ -1,12 +1,15 @@
 ; Inno Setup Script for Prompt Optimizer
 ; This script creates a Windows installer (.exe) for the Flutter application
 
+#ifndef MyAppVersion
+  #define MyAppVersion "1.0.0"
+#endif
+
 #define MyAppName "Prompt Optimizer"
-#define MyAppVersion GetVersionNumbersString("..\pubspec.yaml")
 #define MyAppPublisher "JIULANG"
 #define MyAppURL "https://github.com/JIULANG9/PromptOptimizer"
 #define MyAppExeName "prompt_optimization.exe"
-#define MyAppId "{{8F9A7B2C-3D4E-5F6A-7B8C-9D0E1F2A3B4C}"
+#define MyAppId "{{8F9A7B2C-3D4E-5F6A-7B8C-9D0E1F2A3B4C}}"
 
 [Setup]
 AppId={#MyAppId}
@@ -52,34 +55,3 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Fil
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
-[Code]
-function GetVersionNumbersString(FileName: String): String;
-var
-  FilePath: String;
-  FileContent: AnsiString;
-  VersionLine: String;
-  P: Integer;
-begin
-  Result := '1.0.0';
-  FilePath := ExpandConstant('{#SourcePath}' + FileName);
-  
-  if LoadStringFromFile(FilePath, FileContent) then
-  begin
-    P := Pos('version:', FileContent);
-    if P > 0 then
-    begin
-      Delete(FileContent, 1, P + 7);
-      P := Pos(#13#10, FileContent);
-      if P > 0 then
-      begin
-        VersionLine := Trim(Copy(FileContent, 1, P - 1));
-        P := Pos('+', VersionLine);
-        if P > 0 then
-          Result := Trim(Copy(VersionLine, 1, P - 1))
-        else
-          Result := VersionLine;
-      end;
-    end;
-  end;
-end;

@@ -283,7 +283,8 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           $VERSION = (Select-String -Path pubspec.yaml -Pattern '^version:').Line.Split(' ')[1].Split('+')[0]
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion=$VERSION windows\installer.iss
+          Write-Host "Building installer for version: $VERSION"
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "/DMyAppVersion=$VERSION" "$PWD\windows\installer.iss"
 
       - name: Rename installer with version
         if: github.event_name != 'pull_request'

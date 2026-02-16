@@ -141,7 +141,8 @@ jobs:
         if: matrix.target == 'windows'
         run: |
           $VERSION = (Select-String -Path pubspec.yaml -Pattern '^version:').Line.Split(' ')[1].Split('+')[0]
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion=$VERSION windows\installer.iss
+          Write-Host "Building installer for version: $VERSION"
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "/DMyAppVersion=$VERSION" "$PWD\windows\installer.iss"
 
       - name: Upload ${{ matrix.target }} artifacts
         uses: actions/upload-artifact@v4
