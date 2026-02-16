@@ -19,7 +19,7 @@ class DefaultApiConfigs {
         baseUrl: const Value(
           'https://agentapi.jiulang9.com/v1/chat/completions',
         ),
-        modelId: const Value('JIULANG-v1'),
+        modelId: const Value('JIULANG-v2'),
         isEnabled: const Value(true),
       ),
       // DashScope（阿里云百炼）
