@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -638,52 +637,6 @@ class _OnboardingBottomSheetState extends State<OnboardingBottomSheet>
     );
   }
 
-  Widget _buildProgressItem(String label, double value, Color color) {
-    final theme = Theme.of(context);
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
-            TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: value),
-              duration: const Duration(milliseconds: 100),
-              builder: (context, animValue, child) {
-                return Text(
-                  '${animValue.toInt()}%',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: value / 100,
-            backgroundColor: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
-            valueColor: AlwaysStoppedAnimation<Color>(color),
-            minHeight: 6,
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildCtaSection() {
     final theme = Theme.of(context);
@@ -996,8 +949,6 @@ class _PulsingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return AnimatedBuilder(
       animation: pulseController,
       builder: (context, child) {
@@ -1015,7 +966,7 @@ class _PulsingButton extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               // 修正语法错误：withValues → withOpacity
-              color: const Color(0xFF33cc99).withOpacity(0.4),
+              color: const Color(0xFF33cc99).withValues(alpha: 0.4),
               blurRadius: 20,
               spreadRadius: 2,
             ),
