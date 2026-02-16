@@ -76,6 +76,11 @@ flutter build windows --release
 #define MyAppURL "https://github.com/JIULANG9/PromptOptimizer"
 ```
 
+**注意**: 如果项目中有 LICENSE 文件,可以在 `[Setup]` 部分添加:
+```pascal
+LicenseFile=..\LICENSE
+```
+
 ### 修改安装选项
 在 `[Tasks]` 部分调整:
 

@@ -22,7 +22,6 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile=..\LICENSE
 OutputDir=..\build\windows\installer
 OutputBaseFilename=PromptOptimizer-{#MyAppVersion}-Setup
 SetupIconFile=..\windows\runner\resources\app_icon.ico
