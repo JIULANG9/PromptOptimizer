@@ -39,7 +39,7 @@ jobs:
           - target: windows
             os: windows-latest
             build_cmd: flutter build windows --release
-            artifact_path: build/windows/runner/Release/
+            artifact_path: build/windows/x64/runner/Release/
             artifact_name: windows
           - target: linux
             os: ubuntu-latest
@@ -130,11 +130,25 @@ jobs:
       - name: Build ${{ matrix.target }}
         run: ${{ matrix.build_cmd }}
 
+      - name: Package Windows EXE
+        if: matrix.target == 'windows'
+        run: |
+          $VERSION = (Select-String -Path pubspec.yaml -Pattern '^version:').Line.Split(' ')[1].Split('+')[0]
+          $source = "build/windows/x64/runner/Release"
+          $exeName = "prompt-optimizer-$VERSION-windows-x86_64.exe"
+          # 复制 runner.exe 为带版本号的 EXE
+          Copy-Item "$source\runner.exe" -Destination $exeName
+          # 同时创建便携版 ZIP（包含所有依赖）
+          Compress-Archive -Path "$source\*" -DestinationPath "prompt-optimizer-$VERSION-windows-x86_64-portable.zip" -Force
+
       - name: Upload ${{ matrix.target }} artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}-build
-          path: ${{ matrix.artifact_path }}
+          path: |
+            ${{ matrix.artifact_path }}
+            prompt-optimizer-*.exe
+            prompt-optimizer-*-portable.zip
           retention-days: 30
 
   release:
@@ -155,6 +169,7 @@ jobs:
             release-assets/android-build/**/*.apk
             release-assets/android-build/**/*.aab
             release-assets/windows-build/**/*.exe
+            release-assets/windows-build/**/*-portable.zip
             release-assets/linux-build/**
             release-assets/macos-build/**/*.app
             release-assets/ios-build/**/*.app
@@ -168,7 +183,8 @@ jobs:
             ### 📱 下载链接
             - **Android APK**: 适用于直接安装
             - **Android AAB**: 适用于 Google Play 发布
-            - **Windows**: Windows 桌面应用
+            - **Windows EXE**: 可执行文件（推荐）
+            - **Windows 便携版**: ZIP 压缩包（包含所有依赖）
             - **Linux**: Linux 桌面应用
             - **macOS**: macOS 桌面应用
             - **iOS**: iOS 应用（需要签名）

@@ -277,16 +277,23 @@ jobs:
           $VERSION = (Select-String -Path pubspec.yaml -Pattern '^version:').Line.Split(' ')[1].Split('+')[0]
           if ('${{ github.event_name }}' -eq 'pull_request') {
             $source = "build/windows/x64/runner/Debug"
+            $exeName = "prompt-optimizer-$VERSION-windows-x86_64-debug.exe"
           } else {
             $source = "build/windows/x64/runner/Release"
+            $exeName = "prompt-optimizer-$VERSION-windows-x86_64.exe"
           }
-          Compress-Archive -Path "$source\*" -DestinationPath "prompt-optimizer-$VERSION-windows-x86_64.zip" -Force
+          # 复制 runner.exe 为带版本号的 EXE
+          Copy-Item "$source\runner.exe" -Destination $exeName
+          # 同时创建便携版 ZIP（包含所有依赖）
+          Compress-Archive -Path "$source\*" -DestinationPath "prompt-optimizer-$VERSION-windows-x86_64-portable.zip" -Force
 
       - name: Upload Windows
         uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: prompt-optimizer-*.zip
+          path: |
+            prompt-optimizer-*.exe
+            prompt-optimizer-*-portable.zip
           retention-days: 30
 
   # Linux 构建任务
