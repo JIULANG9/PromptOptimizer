@@ -39,7 +39,7 @@ jobs:
           - target: windows
             os: windows-latest
             build_cmd: flutter build windows --release
-            artifact_path: build/windows/x64/runner/Release/
+            artifact_path: build/windows/installer/
             artifact_name: windows
           - target: linux
             os: ubuntu-latest
@@ -130,25 +130,24 @@ jobs:
       - name: Build ${{ matrix.target }}
         run: ${{ matrix.build_cmd }}
 
-      - name: Package Windows EXE
+      - name: Install Inno Setup (Windows)
+        if: matrix.target == 'windows'
+        run: |
+          choco install innosetup -y
+          $env:PATH += ";C:\Program Files (x86)\Inno Setup 6"
+          [Environment]::SetEnvironmentVariable("PATH", $env:PATH, "Machine")
+
+      - name: Create Inno Setup installer (Windows)
         if: matrix.target == 'windows'
         run: |
           $VERSION = (Select-String -Path pubspec.yaml -Pattern '^version:').Line.Split(' ')[1].Split('+')[0]
-          $source = "build/windows/x64/runner/Release"
-          $exeName = "prompt-optimizer-$VERSION-windows-x86_64.exe"
-          # 复制 runner.exe 为带版本号的 EXE
-          Copy-Item "$source\runner.exe" -Destination $exeName
-          # 同时创建便携版 ZIP（包含所有依赖）
-          Compress-Archive -Path "$source\*" -DestinationPath "prompt-optimizer-$VERSION-windows-x86_64-portable.zip" -Force
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion=$VERSION windows\installer.iss
 
       - name: Upload ${{ matrix.target }} artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}-build
-          path: |
-            ${{ matrix.artifact_path }}
-            prompt-optimizer-*.exe
-            prompt-optimizer-*-portable.zip
+          path: ${{ matrix.artifact_path }}
           retention-days: 30
 
   release:
@@ -169,7 +168,6 @@ jobs:
             release-assets/android-build/**/*.apk
             release-assets/android-build/**/*.aab
             release-assets/windows-build/**/*.exe
-            release-assets/windows-build/**/*-portable.zip
             release-assets/linux-build/**
             release-assets/macos-build/**/*.app
             release-assets/ios-build/**/*.app
@@ -178,22 +176,21 @@ jobs:
           prerelease: false
           generate_release_notes: true
           body: |
-            ## 🚀 Prompt Optimizer ${{ github.ref_name }}
+            ## Prompt Optimizer ${{ github.ref_name }}
             
-            ### 📱 下载链接
+            ### 下载链接
             - **Android APK**: 适用于直接安装
             - **Android AAB**: 适用于 Google Play 发布
-            - **Windows EXE**: 可执行文件（推荐）
-            - **Windows 便携版**: ZIP 压缩包（包含所有依赖）
+            - **Windows**: Windows 安装包 (.exe),双击即可安装
             - **Linux**: Linux 桌面应用
             - **macOS**: macOS 桌面应用
-            - **iOS**: iOS 应用（需要签名）
+            - **iOS**: iOS 应用(需要签名)
             - **Web**: 在线版本
             
-            ### ✨ 新特性
+            ### 新特性
             请查看 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) 了解详细更新内容。
             
-            ### 📖 使用说明
+            ### 使用说明
             详细使用说明请参考 [README.md](https://github.com/${{ github.repository }}/blob/main/README.md)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

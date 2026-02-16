@@ -272,28 +272,46 @@ jobs:
             flutter build windows --release
           }
 
-      - name: Package Windows
+      - name: Install Inno Setup
+        if: github.event_name != 'pull_request'
+        run: |
+          choco install innosetup -y
+          $env:PATH += ";C:\Program Files (x86)\Inno Setup 6"
+          [Environment]::SetEnvironmentVariable("PATH", $env:PATH, "Machine")
+
+      - name: Create Inno Setup installer
+        if: github.event_name != 'pull_request'
         run: |
           $VERSION = (Select-String -Path pubspec.yaml -Pattern '^version:').Line.Split(' ')[1].Split('+')[0]
-          if ('${{ github.event_name }}' -eq 'pull_request') {
-            $source = "build/windows/x64/runner/Debug"
-            $exeName = "prompt-optimizer-$VERSION-windows-x86_64-debug.exe"
-          } else {
-            $source = "build/windows/x64/runner/Release"
-            $exeName = "prompt-optimizer-$VERSION-windows-x86_64.exe"
-          }
-          # 复制 runner.exe 为带版本号的 EXE
-          Copy-Item "$source\runner.exe" -Destination $exeName
-          # 同时创建便携版 ZIP（包含所有依赖）
-          Compress-Archive -Path "$source\*" -DestinationPath "prompt-optimizer-$VERSION-windows-x86_64-portable.zip" -Force
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion=$VERSION windows\installer.iss
 
-      - name: Upload Windows
+      - name: Rename installer with version
+        if: github.event_name != 'pull_request'
+        run: |
+          $VERSION = (Select-String -Path pubspec.yaml -Pattern '^version:').Line.Split(' ')[1].Split('+')[0]
+          Move-Item "build\windows\installer\PromptOptimizer-$VERSION-Setup.exe" "prompt-optimizer-$VERSION-windows-x86_64-setup.exe"
+
+      - name: Package Windows ZIP (for PR)
+        if: github.event_name == 'pull_request'
+        run: |
+          $VERSION = (Select-String -Path pubspec.yaml -Pattern '^version:').Line.Split(' ')[1].Split('+')[0]
+          $source = "build/windows/x64/runner/Debug"
+          Compress-Archive -Path "$source\*" -DestinationPath "prompt-optimizer-$VERSION-windows-x86_64.zip" -Force
+
+      - name: Upload Windows installer
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: |
-            prompt-optimizer-*.exe
-            prompt-optimizer-*-portable.zip
+          path: prompt-optimizer-*-setup.exe
+          retention-days: 30
+
+      - name: Upload Windows ZIP (for PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: prompt-optimizer-*.zip
           retention-days: 30
 
   # Linux 构建任务
@@ -516,7 +534,7 @@ jobs:
             - `prompt-optimizer-*-android-google-play.aab` - Google Play 发布
 
             **Windows:**
-            - `prompt-optimizer-*-windows-x86_64.zip` - Windows 便携版
+            - `prompt-optimizer-*-windows-x86_64-setup.exe` - Windows 安装包(双击安装)
 
             **Linux:**
             - `prompt-optimizer-*-linux-x86_64.tar.gz` - Linux 便携版
