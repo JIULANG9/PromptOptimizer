@@ -1,6 +1,6 @@
 {
-    "name": "prompt_optimization",
-    "short_name": "prompt_optimization",
+    "name": "提示词优化",
+    "short_name": "提示词优化",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
