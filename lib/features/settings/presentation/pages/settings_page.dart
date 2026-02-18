@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/routing/app_router.dart';
@@ -180,6 +182,64 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: 8),
           RippleSection(
             children: [
+              RippleExpansionTile(
+                leading: const Icon(Icons.language_outlined),
+                title: l10n.settingsWebsite,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                    child: Column(
+                      children: [
+                        _LinkItem(
+                          icon: Icons.public_outlined,
+                          label: 'Official Website',
+                          value: 'app.jiulang9.com',
+                          onTap: () => _launchUrl('https://app.jiulang9.com'),
+                        ),
+                        const SizedBox(height: 12),
+                        _LinkItem(
+                          icon: Icons.code_outlined,
+                          label: 'GitHub',
+                          value: 'github.com/JIULANG9/PromptOptimizer',
+                          onTap: () => _launchUrl('https://github.com/JIULANG9/PromptOptimizer'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(height: 1, indent: 16, endIndent: 16),
+              RippleExpansionTile(
+                leading: const Icon(Icons.mail_outline),
+                title: l10n.settingsContactAuthor,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                    child: Column(
+                      children: [
+                        _ContactItem(
+                          icon: Icons.email_outlined,
+                          label: l10n.settingsContactEmail,
+                          value: l10n.settingsContactEmailAddress,
+                          onTap: () => _copyToClipboard(
+                            l10n.settingsContactEmailAddress,
+                            l10n.toastCopiedEmail,
+                            ref,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _ContactItem(
+                          icon: Icons.chat_outlined,
+                          label: l10n.settingsContactWeChat,
+                          value: l10n.settingsContactWeChatId,
+                          onTap: () => _launchWeChat(l10n.settingsContactWeChatId, context, ref),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(height: 1, indent: 16, endIndent: 16),
               RippleListTile(
                 leading: const Icon(Icons.groups_outlined),
                 title: l10n.settingsJoinGroup,
@@ -278,6 +338,191 @@ class SettingsPage extends ConsumerWidget {
       case ThemeModeSetting.dark:
         return l10n.themeDark;
     }
+  }
+
+  /// 打开 URL 链接
+  Future<void> _launchUrl(String url) async {
+    try {
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      // 如果无法打开链接，忽略错误
+    }
+  }
+
+  /// 打开微信应用或复制微信号
+  Future<void> _launchWeChat(String weChatId, BuildContext context, WidgetRef ref) async {
+    // 在异步调用前获取 l10n
+    final l10n = AppLocalizations.of(context)!;
+    
+    try {
+      // 尝试打开微信应用，使用 weixin:// 协议
+      final weChatUrl = 'weixin://dl/chat/?$weChatId';
+      if (await canLaunchUrl(Uri.parse(weChatUrl))) {
+        await launchUrl(Uri.parse(weChatUrl));
+      } else {
+        // 如果微信应用未安装，复制微信号到剪贴板
+        Clipboard.setData(ClipboardData(text: weChatId));
+        ref.read(toastProvider.notifier).showSuccess(l10n.toastCopiedWeChat);
+      }
+    } catch (e) {
+      // 如果无法打开微信，复制微信号到剪贴板
+      Clipboard.setData(ClipboardData(text: weChatId));
+      ref.read(toastProvider.notifier).showSuccess(l10n.toastCopiedWeChat);
+    }
+  }
+
+  /// 复制到剪贴板
+  void _copyToClipboard(String text, String message, WidgetRef ref) {
+    Clipboard.setData(ClipboardData(text: text));
+    ref.read(toastProvider.notifier).showSuccess(message);
+  }
+}
+
+/// 链接项组件（用于官网和 GitHub）
+class _LinkItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+
+  const _LinkItem({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: theme.colorScheme.primary,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.open_in_new_outlined,
+              size: 18,
+              color: theme.colorScheme.primary.withValues(alpha: 0.7),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 联系项组件
+class _ContactItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+
+  const _ContactItem({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: theme.colorScheme.primary,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.copy_outlined,
+              size: 18,
+              color: theme.colorScheme.primary.withValues(alpha: 0.7),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

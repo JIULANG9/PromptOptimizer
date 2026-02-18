@@ -440,6 +440,60 @@ abstract class AppLocalizations {
   /// **'Theme'**
   String get settingsTheme;
 
+  /// No description provided for @settingsWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Official Website'**
+  String get settingsWebsite;
+
+  /// No description provided for @settingsWebsiteDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit our official website'**
+  String get settingsWebsiteDesc;
+
+  /// No description provided for @settingsContactAuthor.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Author'**
+  String get settingsContactAuthor;
+
+  /// No description provided for @settingsContactEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get settingsContactEmail;
+
+  /// No description provided for @settingsContactWeChat.
+  ///
+  /// In en, this message translates to:
+  /// **'WeChat'**
+  String get settingsContactWeChat;
+
+  /// No description provided for @settingsContactEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'2021662556@qq.com'**
+  String get settingsContactEmailAddress;
+
+  /// No description provided for @settingsContactWeChatId.
+  ///
+  /// In en, this message translates to:
+  /// **'ISSWENJIE'**
+  String get settingsContactWeChatId;
+
+  /// No description provided for @toastCopiedEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email copied to clipboard'**
+  String get toastCopiedEmail;
+
+  /// No description provided for @toastCopiedWeChat.
+  ///
+  /// In en, this message translates to:
+  /// **'WeChat ID copied to clipboard'**
+  String get toastCopiedWeChat;
+
   /// No description provided for @historyTitle.
   ///
   /// In en, this message translates to:

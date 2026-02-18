@@ -16,46 +16,16 @@ class AppBootstrapGate extends ConsumerWidget {
     switch (initState.status) {
       case AppInitStatus.idle:
       case AppInitStatus.loading:
-        return const MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: Scaffold(
-            body: Center(
-              child: Text('Loading...'),
-            ),
-          ),
-        );
+        // 使用透明占位符，避免白屏和 loading 字样
+        return const SizedBox.shrink();
       case AppInitStatus.error:
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Failed to initialize'),
-                  const SizedBox(height: 12),
-                  Text(initState.errorMessage ?? 'Unknown error'),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () => ref.read(appInitProvider.notifier).start(),
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
+        // 错误状态静默处理，避免影响用户体验
+        // 如果初始化失败，应用将保持在加载状态
+        return const SizedBox.shrink();
       case AppInitStatus.ready:
         final result = initState.result;
         if (result == null) {
-          return const MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: Scaffold(
-              body: Center(
-                child: Text('Loading...'),
-              ),
-            ),
-          );
+          return const SizedBox.shrink();
         }
 
         return ProviderScope(

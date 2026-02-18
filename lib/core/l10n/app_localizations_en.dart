@@ -183,6 +183,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTheme => 'Theme';
 
   @override
+  String get settingsWebsite => 'Official Website';
+
+  @override
+  String get settingsWebsiteDesc => 'Visit our official website';
+
+  @override
+  String get settingsContactAuthor => 'Contact Author';
+
+  @override
+  String get settingsContactEmail => 'Email';
+
+  @override
+  String get settingsContactWeChat => 'WeChat';
+
+  @override
+  String get settingsContactEmailAddress => '2021662556@qq.com';
+
+  @override
+  String get settingsContactWeChatId => 'ISSWENJIE';
+
+  @override
+  String get toastCopiedEmail => 'Email copied to clipboard';
+
+  @override
+  String get toastCopiedWeChat => 'WeChat ID copied to clipboard';
+
+  @override
   String get historyTitle => 'History';
 
   @override

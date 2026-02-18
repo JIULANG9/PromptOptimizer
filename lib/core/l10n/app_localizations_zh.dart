@@ -182,6 +182,33 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsTheme => '主题';
 
   @override
+  String get settingsWebsite => '官方网站';
+
+  @override
+  String get settingsWebsiteDesc => '访问我们的官方网站';
+
+  @override
+  String get settingsContactAuthor => '联系作者';
+
+  @override
+  String get settingsContactEmail => '邮箱';
+
+  @override
+  String get settingsContactWeChat => '微信';
+
+  @override
+  String get settingsContactEmailAddress => '2021662556@qq.com';
+
+  @override
+  String get settingsContactWeChatId => 'ISSWENJIE';
+
+  @override
+  String get toastCopiedEmail => '邮箱已复制到剪贴板';
+
+  @override
+  String get toastCopiedWeChat => '微信号已复制到剪贴板';
+
+  @override
   String get historyTitle => '历史记录';
 
   @override

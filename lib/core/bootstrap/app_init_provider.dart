@@ -35,16 +35,19 @@ class AppInitState {
 }
 
 class AppInitNotifier extends StateNotifier<AppInitState> {
-  final AppBootstrapper _bootstrapper;
+  final Future<AppBootstrapResult>? _preInitFuture;
 
-  AppInitNotifier(this._bootstrapper) : super(const AppInitState()) {
-    start();
+  AppInitNotifier(this._preInitFuture) : super(const AppInitState()) {
+    _initialize();
   }
 
-  Future<void> start() async {
+  Future<void> _initialize() async {
     state = state.copyWith(status: AppInitStatus.loading, clearError: true);
     try {
-      final result = await _bootstrapper.bootstrap();
+      // 如果有预初始化的 Future，直接使用，否则创建新的
+      final result = _preInitFuture != null 
+          ? await _preInitFuture 
+          : await AppBootstrapper().bootstrap();
       state = state.copyWith(status: AppInitStatus.ready, result: result);
     } catch (e) {
       state = state.copyWith(status: AppInitStatus.error, errorMessage: e.toString());
@@ -52,10 +55,12 @@ class AppInitNotifier extends StateNotifier<AppInitState> {
   }
 }
 
-final appBootstrapperProvider = Provider<AppBootstrapper>((ref) {
-  return AppBootstrapper();
+/// 预初始化结果 Provider（由 main.dart 注入）
+final bootstrapResultFutureProvider = Provider<Future<AppBootstrapResult>?>((ref) {
+  return null;
 });
 
 final appInitProvider = StateNotifierProvider<AppInitNotifier, AppInitState>((ref) {
-  return AppInitNotifier(ref.watch(appBootstrapperProvider));
+  final preInitFuture = ref.watch(bootstrapResultFutureProvider);
+  return AppInitNotifier(preInitFuture);
 });

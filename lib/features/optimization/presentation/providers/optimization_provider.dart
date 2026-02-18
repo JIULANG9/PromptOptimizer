@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../api_config/data/api_config_repository.dart';
 import '../../../api_config/presentation/providers/api_config_provider.dart';
 import '../../../history/presentation/providers/history_provider.dart';
 import '../../../settings/data/settings_repository.dart';
 import '../../../settings/presentation/providers/settings_provider.dart';
+import '../../../template/data/template_repository.dart';
 import '../../../template/presentation/providers/template_provider.dart';
 import '../../data/openai_api_service.dart';
 import '../../domain/entities/optimization_state.dart';
@@ -17,19 +19,51 @@ import '../../domain/usecases/optimize_prompt_usecase.dart';
 class OptimizationNotifier extends StateNotifier<OptimizationState> {
   final OptimizePromptUseCase _useCase;
   final SettingsRepository _settingsRepo;
+  final ApiConfigRepository _apiConfigRepo;
+  final TemplateRepository _templateRepo;
   StreamSubscription<String>? _streamSubscription;
   Timer? _timer;
 
-  OptimizationNotifier(this._useCase, this._settingsRepo)
-    : super(const OptimizationState()) {
+  OptimizationNotifier(
+    this._useCase,
+    this._settingsRepo,
+    this._apiConfigRepo,
+    this._templateRepo,
+  ) : super(const OptimizationState()) {
     _loadPersistedSelections();
   }
 
-  /// 从 Hive 恢复上次的选择
+  /// 从 Hive 恢复上次的选择，如果没有保存则自动选择第一个可用的模型和模板
   void _loadPersistedSelections() {
-    final apiConfigId = _settingsRepo.getSelectedApiConfigId();
+    var apiConfigId = _settingsRepo.getSelectedApiConfigId();
     final currentTab = state.currentTab;
-    final templateId = _settingsRepo.getSelectedTemplateId(currentTab);
+    var templateId = _settingsRepo.getSelectedTemplateId(currentTab);
+
+    // 如果没有保存的 API 配置 ID，自动选择第一个启用的配置
+    if (apiConfigId == null) {
+      _apiConfigRepo.getAll().then((configs) {
+        final enabledConfigs = configs.where((c) => c.isEnabled).toList();
+        if (enabledConfigs.isNotEmpty) {
+          final firstConfig = enabledConfigs.first;
+          apiConfigId = firstConfig.id;
+          state = state.copyWith(selectedApiConfigId: apiConfigId);
+          _settingsRepo.saveSelectedApiConfigId(apiConfigId!);
+        }
+      });
+    }
+
+    // 如果没有保存的模板 ID，自动选择该 Tab 对应的第一个模板
+    if (templateId == null) {
+      _templateRepo.getByType(currentTab).then((templates) {
+        if (templates.isNotEmpty) {
+          final firstTemplate = templates.first;
+          templateId = firstTemplate.id;
+          state = state.copyWith(selectedTemplateId: templateId);
+          _settingsRepo.saveSelectedTemplateId(currentTab, templateId!);
+        }
+      });
+    }
+
     state = state.copyWith(
       selectedApiConfigId: apiConfigId,
       selectedTemplateId: templateId,
@@ -141,13 +175,16 @@ class OptimizationNotifier extends StateNotifier<OptimizationState> {
 
           // 自动保存历史
           try {
-            await _useCase.saveHistory(
-              originalPrompt: originalText,
-              optimizedPrompt: completedPrompt,
-              type: tab,
-              modelKey: apiId,
-              templateId: tplId,
-            );
+            // 确保优化结果不为空才保存
+            if (completedPrompt.trim().isNotEmpty) {
+              await _useCase.saveHistory(
+                originalPrompt: originalText,
+                optimizedPrompt: completedPrompt,
+                type: tab,
+                modelKey: apiId,
+                templateId: tplId,
+              );
+            }
           } catch (_) {
             // 历史保存失败不影响主流程
           }
@@ -245,5 +282,12 @@ final optimizationProvider =
       return OptimizationNotifier(
         ref.watch(optimizePromptUseCaseProvider),
         ref.watch(settingsRepositoryProvider),
+        ref.watch(apiConfigRepositoryProvider),
+        ref.watch(templateRepositoryProvider),
       );
-    }, dependencies: [optimizePromptUseCaseProvider, settingsRepositoryProvider]);
+    }, dependencies: [
+      optimizePromptUseCaseProvider,
+      settingsRepositoryProvider,
+      apiConfigRepositoryProvider,
+      templateRepositoryProvider,
+    ]);

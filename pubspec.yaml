@@ -40,6 +40,8 @@ dependencies:
   web: ^1.0.0
   # 保存图片到相册
   image_gallery_saver_plus: ^4.0.1
+  # 打开链接
+  url_launcher: ^6.3.0
   # JSON序列化注解
   json_annotation: ^4.9.0
   freezed_annotation: ^2.4.4

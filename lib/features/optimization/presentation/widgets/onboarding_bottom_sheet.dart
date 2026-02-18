@@ -13,7 +13,7 @@ class OnboardingBottomSheet extends StatefulWidget {
     final hasSeenOnboarding = box.get('hasSeenOnboarding', defaultValue: false);
     
     if (!hasSeenOnboarding && context.mounted) {
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 1));
       if (context.mounted) {
         showModalBottomSheet(
           context: context,
@@ -979,9 +979,9 @@ class _PulsingButton extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF33cc99),
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 19),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
+                borderRadius: BorderRadius.circular(99),
               ),
               elevation: 0,
             ),
