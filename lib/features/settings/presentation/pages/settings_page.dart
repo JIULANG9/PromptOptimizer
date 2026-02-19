@@ -182,31 +182,11 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: 8),
           RippleSection(
             children: [
-              RippleExpansionTile(
-                leading: const Icon(Icons.language_outlined),
-                title: l10n.settingsWebsite,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                    child: Column(
-                      children: [
-                        _LinkItem(
-                          icon: Icons.public_outlined,
-                          label: 'Official Website',
-                          value: 'app.jiulang9.com',
-                          onTap: () => _launchUrl('https://app.jiulang9.com'),
-                        ),
-                        const SizedBox(height: 12),
-                        _LinkItem(
-                          icon: Icons.code_outlined,
-                          label: 'GitHub',
-                          value: 'github.com/JIULANG9/PromptOptimizer',
-                          onTap: () => _launchUrl('https://github.com/JIULANG9/PromptOptimizer'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              RippleListTile(
+                leading: const Icon(Icons.info_outlined),
+                title: l10n.aboutAppTitle,
+                showArrow: true,
+                onTap: () => context.push(AppRouter.aboutApp),
               ),
               const Divider(height: 1, indent: 16, endIndent: 16),
               RippleExpansionTile(
@@ -245,27 +225,6 @@ class SettingsPage extends ConsumerWidget {
                 title: l10n.settingsJoinGroup,
                 showArrow: true,
                 onTap: () => context.push(AppRouter.discussionGroup),
-              ),
-              const Divider(height: 1, indent: 16, endIndent: 16),
-              RippleListTile(
-                leading: const Icon(Icons.privacy_tip_outlined),
-                title: l10n.settingsPrivacyPolicy,
-                showArrow: true,
-                onTap: () => context.push(AppRouter.privacyPolicy),
-              ),
-              const Divider(height: 1, indent: 16, endIndent: 16),
-              RippleListTile(
-                leading: const Icon(Icons.description_outlined),
-                title: l10n.settingsUserAgreement,
-                showArrow: true,
-                onTap: () => context.push(AppRouter.userAgreement),
-              ),
-              const Divider(height: 1, indent: 16, endIndent: 16),
-              RippleListTile(
-                leading: const Icon(Icons.code_outlined),
-                title: l10n.settingsOpenSource,
-                showArrow: true,
-                onTap: () => context.push(AppRouter.openSource),
               ),
             ],
           ),
@@ -340,36 +299,23 @@ class SettingsPage extends ConsumerWidget {
     }
   }
 
-  /// 打开 URL 链接
-  Future<void> _launchUrl(String url) async {
-    try {
-      if (await canLaunchUrl(Uri.parse(url))) {
-        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-      }
-    } catch (e) {
-      // 如果无法打开链接，忽略错误
-    }
-  }
-
-  /// 打开微信应用或复制微信号
+  /// 复制微信号到剪贴板并弹出Toast，同时尝试打开微信应用
   Future<void> _launchWeChat(String weChatId, BuildContext context, WidgetRef ref) async {
-    // 在异步调用前获取 l10n
     final l10n = AppLocalizations.of(context)!;
+    
+    // 复制微信号到剪贴板
+    await Clipboard.setData(ClipboardData(text: weChatId));
+    // 弹出Toast提示
+    ref.read(toastProvider.notifier).showSuccess(l10n.toastCopiedWeChat);
     
     try {
       // 尝试打开微信应用，使用 weixin:// 协议
       final weChatUrl = 'weixin://dl/chat/?$weChatId';
       if (await canLaunchUrl(Uri.parse(weChatUrl))) {
         await launchUrl(Uri.parse(weChatUrl));
-      } else {
-        // 如果微信应用未安装，复制微信号到剪贴板
-        Clipboard.setData(ClipboardData(text: weChatId));
-        ref.read(toastProvider.notifier).showSuccess(l10n.toastCopiedWeChat);
       }
     } catch (e) {
-      // 如果无法打开微信，复制微信号到剪贴板
-      Clipboard.setData(ClipboardData(text: weChatId));
-      ref.read(toastProvider.notifier).showSuccess(l10n.toastCopiedWeChat);
+      // 如果无法打开微信应用，忽略错误（微信号已复制）
     }
   }
 
@@ -377,79 +323,6 @@ class SettingsPage extends ConsumerWidget {
   void _copyToClipboard(String text, String message, WidgetRef ref) {
     Clipboard.setData(ClipboardData(text: text));
     ref.read(toastProvider.notifier).showSuccess(message);
-  }
-}
-
-/// 链接项组件（用于官网和 GitHub）
-class _LinkItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final VoidCallback onTap;
-
-  const _LinkItem({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 20,
-              color: theme.colorScheme.primary,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.open_in_new_outlined,
-              size: 18,
-              color: theme.colorScheme.primary.withValues(alpha: 0.7),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

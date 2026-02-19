@@ -210,6 +210,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toastCopiedWeChat => 'WeChat ID copied to clipboard';
 
   @override
+  String get toastCopiedVersion => 'Version copied to clipboard';
+
+  @override
+  String get aboutAppTitle => 'About App';
+
+  @override
+  String get aboutAppSlogan => 'Optimize Prompts, Unleash AI Potential';
+
+  @override
+  String aboutAppVersion(String version) {
+    return 'v$version';
+  }
+
+  @override
+  String get aboutAppOfficialWebsite => 'Official Website';
+
+  @override
+  String get aboutAppPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get aboutAppUserAgreement => 'User Agreement';
+
+  @override
+  String get aboutAppOpenSource => 'Open Source Licenses';
+
+  @override
   String get historyTitle => 'History';
 
   @override

@@ -75,6 +75,20 @@
   "settingsContactWeChatId": "ISSWENJIE",
   "toastCopiedEmail": "邮箱已复制到剪贴板",
   "toastCopiedWeChat": "微信号已复制到剪贴板",
+  "toastCopiedVersion": "版本号已复制到剪贴板",
+
+  "aboutAppTitle": "关于应用",
+  "aboutAppSlogan": "优化提示词释放 AI 潜能",
+  "aboutAppVersion": "v{version}",
+  "@aboutAppVersion": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "aboutAppOfficialWebsite": "官方网址",
+  "aboutAppPrivacyPolicy": "隐私政策",
+  "aboutAppUserAgreement": "用户协议",
+  "aboutAppOpenSource": "开源协议",
 
   "historyTitle": "历史记录",
   "historyEmpty": "暂无优化历史",

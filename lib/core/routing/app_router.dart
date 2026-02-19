@@ -6,6 +6,7 @@ import '../../features/history/presentation/pages/history_detail_page.dart';
 import '../../features/history/presentation/pages/history_list_page.dart';
 import '../../features/optimization/presentation/pages/home_page.dart';
 import '../../features/optimization/presentation/pages/result_page.dart';
+import '../../features/settings/presentation/pages/about_app_page.dart';
 import '../../features/settings/presentation/pages/discussion_group_page.dart';
 import '../../features/settings/presentation/pages/open_source_page.dart';
 import '../../features/settings/presentation/pages/privacy_policy_page.dart';
@@ -23,6 +24,7 @@ class AppRouter {
   static const String home = '/';
   static const String result = '/result';
   static const String settings = '/settings';
+  static const String aboutApp = '/settings/about-app';
   static const String apiConfigList = '/settings/api-configs';
   static const String apiConfigNew = '/settings/api-configs/new';
   static const String apiConfigEdit = '/settings/api-configs/:id/edit';
@@ -59,6 +61,12 @@ class AppRouter {
       GoRoute(
         path: settings,
         builder: (context, state) => const SettingsPage(),
+      ),
+
+      // ─── 关于应用 ───
+      GoRoute(
+        path: aboutApp,
+        builder: (context, state) => const AboutAppPage(),
       ),
 
       // ─── API 配置列表 ───

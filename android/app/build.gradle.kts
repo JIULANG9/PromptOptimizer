@@ -13,7 +13,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.jiulang.prompt.optimization.prompt_optimization"
+    namespace = "com.jiulang.prompt.optimizer"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -47,7 +47,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.jiulang.prompt.optimization.prompt_optimization"
+        applicationId = "com.jiulang.prompt.optimizer"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

@@ -209,6 +209,32 @@ class AppLocalizationsZh extends AppLocalizations {
   String get toastCopiedWeChat => '微信号已复制到剪贴板';
 
   @override
+  String get toastCopiedVersion => '版本号已复制到剪贴板';
+
+  @override
+  String get aboutAppTitle => '关于应用';
+
+  @override
+  String get aboutAppSlogan => '优化提示词释放 AI 潜能';
+
+  @override
+  String aboutAppVersion(String version) {
+    return 'v$version';
+  }
+
+  @override
+  String get aboutAppOfficialWebsite => '官方网址';
+
+  @override
+  String get aboutAppPrivacyPolicy => '隐私政策';
+
+  @override
+  String get aboutAppUserAgreement => '用户协议';
+
+  @override
+  String get aboutAppOpenSource => '开源协议';
+
+  @override
   String get historyTitle => '历史记录';
 
   @override

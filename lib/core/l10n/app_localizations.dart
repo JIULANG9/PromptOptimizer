@@ -494,6 +494,54 @@ abstract class AppLocalizations {
   /// **'WeChat ID copied to clipboard'**
   String get toastCopiedWeChat;
 
+  /// No description provided for @toastCopiedVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version copied to clipboard'**
+  String get toastCopiedVersion;
+
+  /// No description provided for @aboutAppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About App'**
+  String get aboutAppTitle;
+
+  /// No description provided for @aboutAppSlogan.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimize Prompts, Unleash AI Potential'**
+  String get aboutAppSlogan;
+
+  /// No description provided for @aboutAppVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'v{version}'**
+  String aboutAppVersion(String version);
+
+  /// No description provided for @aboutAppOfficialWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Official Website'**
+  String get aboutAppOfficialWebsite;
+
+  /// No description provided for @aboutAppPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get aboutAppPrivacyPolicy;
+
+  /// No description provided for @aboutAppUserAgreement.
+  ///
+  /// In en, this message translates to:
+  /// **'User Agreement'**
+  String get aboutAppUserAgreement;
+
+  /// No description provided for @aboutAppOpenSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Source Licenses'**
+  String get aboutAppOpenSource;
+
   /// No description provided for @historyTitle.
   ///
   /// In en, this message translates to:

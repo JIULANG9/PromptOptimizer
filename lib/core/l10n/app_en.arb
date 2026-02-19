@@ -75,6 +75,20 @@
   "settingsContactWeChatId": "ISSWENJIE",
   "toastCopiedEmail": "Email copied to clipboard",
   "toastCopiedWeChat": "WeChat ID copied to clipboard",
+  "toastCopiedVersion": "Version copied to clipboard",
+
+  "aboutAppTitle": "About App",
+  "aboutAppSlogan": "Optimize Prompts, Unleash AI Potential",
+  "aboutAppVersion": "v{version}",
+  "@aboutAppVersion": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "aboutAppOfficialWebsite": "Official Website",
+  "aboutAppPrivacyPolicy": "Privacy Policy",
+  "aboutAppUserAgreement": "User Agreement",
+  "aboutAppOpenSource": "Open Source Licenses",
 
   "historyTitle": "History",
   "historyEmpty": "No optimization history yet",

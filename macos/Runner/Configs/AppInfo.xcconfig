@@ -8,7 +8,7 @@
 PRODUCT_NAME = prompt_optimization
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.jiulang.prompt.optimization.promptOptimization
+PRODUCT_BUNDLE_IDENTIFIER = com.jiulang.prompt.optimizer
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 com.jiulang.prompt.optimization. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2026 JIULANG9. All rights reserved.
