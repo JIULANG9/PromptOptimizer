@@ -46,4 +46,4 @@ app.*.map.json
 
 # PRPs
 /Documentation/
-/PRPs/
+/PRPs/ 

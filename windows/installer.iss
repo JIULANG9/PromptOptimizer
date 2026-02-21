@@ -5,10 +5,10 @@
   #define MyAppVersion "1.0.0"
 #endif
 
-#define MyAppName "Prompt Optimizer"
+#define MyAppName "PromptOptimizer"
 #define MyAppPublisher "JIULANG"
 #define MyAppURL "https://github.com/JIULANG9/PromptOptimizer"
-#define MyAppExeName "prompt_optimization.exe"
+#define MyAppExeName "PromptOptimization.exe"
 #define MyAppId "{{8F9A7B2C-3D4E-5F6A-7B8C-9D0E1F2A3B4C}}"
 
 [Setup]
