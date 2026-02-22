@@ -7,6 +7,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/routing/app_router.dart';
 import '../../../widgets/glass/glass_widgets.dart';
 import '../../../api_config/presentation/providers/api_config_provider.dart';
+import '../../../history/presentation/providers/history_provider.dart';
 import '../../../widgets/toast/toast_controller.dart';
 import '../../../widgets/toast/toast_models.dart';
 import '../../domain/entities/optimization_state.dart';
@@ -75,12 +76,13 @@ class _HomePageState extends ConsumerState<HomePage>
 
     // 全局监听：优化完成后 toast 提示 + 移动端流式开始时跳转结果页
     ref.listen<OptimizationState>(optimizationProvider, (prev, next) {
-      // 流式完成 → 显示成功 toast
+      // 流式完成 → 显示成功 toast + 刷新历史列表
       if (prev?.status == OptimizationStatus.streaming &&
           next.status == OptimizationStatus.success) {
         ref
             .read(toastProvider.notifier)
             .showSuccess(l10n.toastOptimizeComplete);
+        ref.read(historyListProvider.notifier).loadHistories();
       }
       // 错误 → 显示错误 toast
       if (next.status == OptimizationStatus.error &&

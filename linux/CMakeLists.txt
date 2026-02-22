@@ -7,7 +7,7 @@ project(PromptOptimization LANGUAGES CXX)
 set(BINARY_NAME "PromptOptimization")
 # The unique GTK application identifier for this application. See:
 # https://wiki.gnome.org/HowDoI/ChooseApplicationID
-set(APPLICATION_ID "com.jiulang.prompt.optimizer")
+set(APPLICATION_ID "com.jiulang.prompt.optimization")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

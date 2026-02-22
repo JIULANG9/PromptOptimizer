@@ -9,11 +9,24 @@ import '../../../widgets/glass/glass_widgets.dart';
 import '../providers/history_provider.dart';
 
 /// 历史记录列表页面
-class HistoryListPage extends ConsumerWidget {
+class HistoryListPage extends ConsumerStatefulWidget {
   const HistoryListPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HistoryListPage> createState() => _HistoryListPageState();
+}
+
+class _HistoryListPageState extends ConsumerState<HistoryListPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(historyListProvider.notifier).loadHistories();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(historyListProvider);
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
@@ -25,7 +38,7 @@ class HistoryListPage extends ConsumerWidget {
           if (state.histories.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.delete_sweep_outlined),
-              onPressed: () => _showClearConfirm(context, ref, l10n),
+              onPressed: () => _showClearConfirm(context, l10n),
               tooltip: l10n.historyClearAll,
             ),
         ],
@@ -136,7 +149,6 @@ class HistoryListPage extends ConsumerWidget {
 
   void _showClearConfirm(
     BuildContext context,
-    WidgetRef ref,
     AppLocalizations l10n,
   ) {
     showDialog(

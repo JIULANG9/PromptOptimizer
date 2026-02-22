@@ -1,4 +1,4 @@
-package com.jiulang.prompt.optimization.prompt_optimization
+package com.jiulang.prompt.optimization
 
 import io.flutter.embedding.android.FlutterActivity
 
