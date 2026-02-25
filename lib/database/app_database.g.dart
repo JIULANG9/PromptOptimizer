@@ -3,6 +3,527 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
+class $AIAppConfigsTable extends AIAppConfigs
+    with TableInfo<$AIAppConfigsTable, AIAppConfig> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AIAppConfigsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _schemeMeta = const VerificationMeta('scheme');
+  @override
+  late final GeneratedColumn<String> scheme = GeneratedColumn<String>(
+    'scheme',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _iconPathMeta = const VerificationMeta(
+    'iconPath',
+  );
+  @override
+  late final GeneratedColumn<String> iconPath = GeneratedColumn<String>(
+    'icon_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isEnabledMeta = const VerificationMeta(
+    'isEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> isEnabled = GeneratedColumn<bool>(
+    'is_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _positionMeta = const VerificationMeta(
+    'position',
+  );
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+    'position',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _isBuiltinMeta = const VerificationMeta(
+    'isBuiltin',
+  );
+  @override
+  late final GeneratedColumn<bool> isBuiltin = GeneratedColumn<bool>(
+    'is_builtin',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_builtin" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: Constant(DateTime.now().millisecondsSinceEpoch),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    scheme,
+    iconPath,
+    isEnabled,
+    position,
+    isBuiltin,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'a_i_app_configs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AIAppConfig> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('scheme')) {
+      context.handle(
+        _schemeMeta,
+        scheme.isAcceptableOrUnknown(data['scheme']!, _schemeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_schemeMeta);
+    }
+    if (data.containsKey('icon_path')) {
+      context.handle(
+        _iconPathMeta,
+        iconPath.isAcceptableOrUnknown(data['icon_path']!, _iconPathMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_iconPathMeta);
+    }
+    if (data.containsKey('is_enabled')) {
+      context.handle(
+        _isEnabledMeta,
+        isEnabled.isAcceptableOrUnknown(data['is_enabled']!, _isEnabledMeta),
+      );
+    }
+    if (data.containsKey('position')) {
+      context.handle(
+        _positionMeta,
+        position.isAcceptableOrUnknown(data['position']!, _positionMeta),
+      );
+    }
+    if (data.containsKey('is_builtin')) {
+      context.handle(
+        _isBuiltinMeta,
+        isBuiltin.isAcceptableOrUnknown(data['is_builtin']!, _isBuiltinMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AIAppConfig map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AIAppConfig(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      scheme: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scheme'],
+      )!,
+      iconPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}icon_path'],
+      )!,
+      isEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_enabled'],
+      )!,
+      position: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}position'],
+      )!,
+      isBuiltin: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_builtin'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $AIAppConfigsTable createAlias(String alias) {
+    return $AIAppConfigsTable(attachedDatabase, alias);
+  }
+}
+
+class AIAppConfig extends DataClass implements Insertable<AIAppConfig> {
+  /// 主键 (UUID)
+  final String id;
+
+  /// 应用名称（如"豆包"、"通义千问"）
+  final String name;
+
+  /// URL Scheme（如"doubao://"、"tongyi://"）
+  final String scheme;
+
+  /// 图标路径（如"assets/icon/icon_doubao.svg"）
+  final String iconPath;
+
+  /// 是否启用（默认 true）
+  final bool isEnabled;
+
+  /// 排序位置（用于控制显示顺序，默认 0）
+  final int position;
+
+  /// 是否内置应用（内置应用使用硬编码 scheme，默认 false）
+  final bool isBuiltin;
+
+  /// 创建时间戳
+  final int createdAt;
+  const AIAppConfig({
+    required this.id,
+    required this.name,
+    required this.scheme,
+    required this.iconPath,
+    required this.isEnabled,
+    required this.position,
+    required this.isBuiltin,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['scheme'] = Variable<String>(scheme);
+    map['icon_path'] = Variable<String>(iconPath);
+    map['is_enabled'] = Variable<bool>(isEnabled);
+    map['position'] = Variable<int>(position);
+    map['is_builtin'] = Variable<bool>(isBuiltin);
+    map['created_at'] = Variable<int>(createdAt);
+    return map;
+  }
+
+  AIAppConfigsCompanion toCompanion(bool nullToAbsent) {
+    return AIAppConfigsCompanion(
+      id: Value(id),
+      name: Value(name),
+      scheme: Value(scheme),
+      iconPath: Value(iconPath),
+      isEnabled: Value(isEnabled),
+      position: Value(position),
+      isBuiltin: Value(isBuiltin),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory AIAppConfig.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AIAppConfig(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      scheme: serializer.fromJson<String>(json['scheme']),
+      iconPath: serializer.fromJson<String>(json['iconPath']),
+      isEnabled: serializer.fromJson<bool>(json['isEnabled']),
+      position: serializer.fromJson<int>(json['position']),
+      isBuiltin: serializer.fromJson<bool>(json['isBuiltin']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'scheme': serializer.toJson<String>(scheme),
+      'iconPath': serializer.toJson<String>(iconPath),
+      'isEnabled': serializer.toJson<bool>(isEnabled),
+      'position': serializer.toJson<int>(position),
+      'isBuiltin': serializer.toJson<bool>(isBuiltin),
+      'createdAt': serializer.toJson<int>(createdAt),
+    };
+  }
+
+  AIAppConfig copyWith({
+    String? id,
+    String? name,
+    String? scheme,
+    String? iconPath,
+    bool? isEnabled,
+    int? position,
+    bool? isBuiltin,
+    int? createdAt,
+  }) => AIAppConfig(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    scheme: scheme ?? this.scheme,
+    iconPath: iconPath ?? this.iconPath,
+    isEnabled: isEnabled ?? this.isEnabled,
+    position: position ?? this.position,
+    isBuiltin: isBuiltin ?? this.isBuiltin,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  AIAppConfig copyWithCompanion(AIAppConfigsCompanion data) {
+    return AIAppConfig(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      scheme: data.scheme.present ? data.scheme.value : this.scheme,
+      iconPath: data.iconPath.present ? data.iconPath.value : this.iconPath,
+      isEnabled: data.isEnabled.present ? data.isEnabled.value : this.isEnabled,
+      position: data.position.present ? data.position.value : this.position,
+      isBuiltin: data.isBuiltin.present ? data.isBuiltin.value : this.isBuiltin,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AIAppConfig(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('scheme: $scheme, ')
+          ..write('iconPath: $iconPath, ')
+          ..write('isEnabled: $isEnabled, ')
+          ..write('position: $position, ')
+          ..write('isBuiltin: $isBuiltin, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    scheme,
+    iconPath,
+    isEnabled,
+    position,
+    isBuiltin,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AIAppConfig &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.scheme == this.scheme &&
+          other.iconPath == this.iconPath &&
+          other.isEnabled == this.isEnabled &&
+          other.position == this.position &&
+          other.isBuiltin == this.isBuiltin &&
+          other.createdAt == this.createdAt);
+}
+
+class AIAppConfigsCompanion extends UpdateCompanion<AIAppConfig> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String> scheme;
+  final Value<String> iconPath;
+  final Value<bool> isEnabled;
+  final Value<int> position;
+  final Value<bool> isBuiltin;
+  final Value<int> createdAt;
+  final Value<int> rowid;
+  const AIAppConfigsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.scheme = const Value.absent(),
+    this.iconPath = const Value.absent(),
+    this.isEnabled = const Value.absent(),
+    this.position = const Value.absent(),
+    this.isBuiltin = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AIAppConfigsCompanion.insert({
+    required String id,
+    required String name,
+    required String scheme,
+    required String iconPath,
+    this.isEnabled = const Value.absent(),
+    this.position = const Value.absent(),
+    this.isBuiltin = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       scheme = Value(scheme),
+       iconPath = Value(iconPath);
+  static Insertable<AIAppConfig> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? scheme,
+    Expression<String>? iconPath,
+    Expression<bool>? isEnabled,
+    Expression<int>? position,
+    Expression<bool>? isBuiltin,
+    Expression<int>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (scheme != null) 'scheme': scheme,
+      if (iconPath != null) 'icon_path': iconPath,
+      if (isEnabled != null) 'is_enabled': isEnabled,
+      if (position != null) 'position': position,
+      if (isBuiltin != null) 'is_builtin': isBuiltin,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AIAppConfigsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? scheme,
+    Value<String>? iconPath,
+    Value<bool>? isEnabled,
+    Value<int>? position,
+    Value<bool>? isBuiltin,
+    Value<int>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return AIAppConfigsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      scheme: scheme ?? this.scheme,
+      iconPath: iconPath ?? this.iconPath,
+      isEnabled: isEnabled ?? this.isEnabled,
+      position: position ?? this.position,
+      isBuiltin: isBuiltin ?? this.isBuiltin,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (scheme.present) {
+      map['scheme'] = Variable<String>(scheme.value);
+    }
+    if (iconPath.present) {
+      map['icon_path'] = Variable<String>(iconPath.value);
+    }
+    if (isEnabled.present) {
+      map['is_enabled'] = Variable<bool>(isEnabled.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (isBuiltin.present) {
+      map['is_builtin'] = Variable<bool>(isBuiltin.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AIAppConfigsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('scheme: $scheme, ')
+          ..write('iconPath: $iconPath, ')
+          ..write('isEnabled: $isEnabled, ')
+          ..write('position: $position, ')
+          ..write('isBuiltin: $isBuiltin, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ApiConfigsTable extends ApiConfigs
     with TableInfo<$ApiConfigsTable, ApiConfig> {
   @override
@@ -1592,12 +2113,16 @@ class OptimizationHistoriesCompanion
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
+  late final $AIAppConfigsTable aIAppConfigs = $AIAppConfigsTable(this);
   late final $ApiConfigsTable apiConfigs = $ApiConfigsTable(this);
   late final $PromptTemplatesTable promptTemplates = $PromptTemplatesTable(
     this,
   );
   late final $OptimizationHistoriesTable optimizationHistories =
       $OptimizationHistoriesTable(this);
+  late final AIAppConfigDao aIAppConfigDao = AIAppConfigDao(
+    this as AppDatabase,
+  );
   late final ApiConfigDao apiConfigDao = ApiConfigDao(this as AppDatabase);
   late final TemplateDao templateDao = TemplateDao(this as AppDatabase);
   late final HistoryDao historyDao = HistoryDao(this as AppDatabase);
@@ -1606,12 +2131,270 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    aIAppConfigs,
     apiConfigs,
     promptTemplates,
     optimizationHistories,
   ];
 }
 
+typedef $$AIAppConfigsTableCreateCompanionBuilder =
+    AIAppConfigsCompanion Function({
+      required String id,
+      required String name,
+      required String scheme,
+      required String iconPath,
+      Value<bool> isEnabled,
+      Value<int> position,
+      Value<bool> isBuiltin,
+      Value<int> createdAt,
+      Value<int> rowid,
+    });
+typedef $$AIAppConfigsTableUpdateCompanionBuilder =
+    AIAppConfigsCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> scheme,
+      Value<String> iconPath,
+      Value<bool> isEnabled,
+      Value<int> position,
+      Value<bool> isBuiltin,
+      Value<int> createdAt,
+      Value<int> rowid,
+    });
+
+class $$AIAppConfigsTableFilterComposer
+    extends Composer<_$AppDatabase, $AIAppConfigsTable> {
+  $$AIAppConfigsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get scheme => $composableBuilder(
+    column: $table.scheme,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get iconPath => $composableBuilder(
+    column: $table.iconPath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isEnabled => $composableBuilder(
+    column: $table.isEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isBuiltin => $composableBuilder(
+    column: $table.isBuiltin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AIAppConfigsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AIAppConfigsTable> {
+  $$AIAppConfigsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get scheme => $composableBuilder(
+    column: $table.scheme,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get iconPath => $composableBuilder(
+    column: $table.iconPath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isEnabled => $composableBuilder(
+    column: $table.isEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isBuiltin => $composableBuilder(
+    column: $table.isBuiltin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AIAppConfigsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AIAppConfigsTable> {
+  $$AIAppConfigsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get scheme =>
+      $composableBuilder(column: $table.scheme, builder: (column) => column);
+
+  GeneratedColumn<String> get iconPath =>
+      $composableBuilder(column: $table.iconPath, builder: (column) => column);
+
+  GeneratedColumn<bool> get isEnabled =>
+      $composableBuilder(column: $table.isEnabled, builder: (column) => column);
+
+  GeneratedColumn<int> get position =>
+      $composableBuilder(column: $table.position, builder: (column) => column);
+
+  GeneratedColumn<bool> get isBuiltin =>
+      $composableBuilder(column: $table.isBuiltin, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$AIAppConfigsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AIAppConfigsTable,
+          AIAppConfig,
+          $$AIAppConfigsTableFilterComposer,
+          $$AIAppConfigsTableOrderingComposer,
+          $$AIAppConfigsTableAnnotationComposer,
+          $$AIAppConfigsTableCreateCompanionBuilder,
+          $$AIAppConfigsTableUpdateCompanionBuilder,
+          (
+            AIAppConfig,
+            BaseReferences<_$AppDatabase, $AIAppConfigsTable, AIAppConfig>,
+          ),
+          AIAppConfig,
+          PrefetchHooks Function()
+        > {
+  $$AIAppConfigsTableTableManager(_$AppDatabase db, $AIAppConfigsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AIAppConfigsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AIAppConfigsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AIAppConfigsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> scheme = const Value.absent(),
+                Value<String> iconPath = const Value.absent(),
+                Value<bool> isEnabled = const Value.absent(),
+                Value<int> position = const Value.absent(),
+                Value<bool> isBuiltin = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AIAppConfigsCompanion(
+                id: id,
+                name: name,
+                scheme: scheme,
+                iconPath: iconPath,
+                isEnabled: isEnabled,
+                position: position,
+                isBuiltin: isBuiltin,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                required String scheme,
+                required String iconPath,
+                Value<bool> isEnabled = const Value.absent(),
+                Value<int> position = const Value.absent(),
+                Value<bool> isBuiltin = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AIAppConfigsCompanion.insert(
+                id: id,
+                name: name,
+                scheme: scheme,
+                iconPath: iconPath,
+                isEnabled: isEnabled,
+                position: position,
+                isBuiltin: isBuiltin,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AIAppConfigsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AIAppConfigsTable,
+      AIAppConfig,
+      $$AIAppConfigsTableFilterComposer,
+      $$AIAppConfigsTableOrderingComposer,
+      $$AIAppConfigsTableAnnotationComposer,
+      $$AIAppConfigsTableCreateCompanionBuilder,
+      $$AIAppConfigsTableUpdateCompanionBuilder,
+      (
+        AIAppConfig,
+        BaseReferences<_$AppDatabase, $AIAppConfigsTable, AIAppConfig>,
+      ),
+      AIAppConfig,
+      PrefetchHooks Function()
+    >;
 typedef $$ApiConfigsTableCreateCompanionBuilder =
     ApiConfigsCompanion Function({
       required String id,
@@ -2440,6 +3223,8 @@ typedef $$OptimizationHistoriesTableProcessedTableManager =
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
+  $$AIAppConfigsTableTableManager get aIAppConfigs =>
+      $$AIAppConfigsTableTableManager(_db, _db.aIAppConfigs);
   $$ApiConfigsTableTableManager get apiConfigs =>
       $$ApiConfigsTableTableManager(_db, _db.apiConfigs);
   $$PromptTemplatesTableTableManager get promptTemplates =>

@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +15,7 @@ import '../../../widgets/item/ripple_list_tile.dart';
 import '../../../widgets/toast/toast_controller.dart';
 import '../../domain/entities/app_settings.dart';
 import '../providers/data_transfer_provider.dart';
+import '../providers/database_reset_provider.dart';
 import '../providers/settings_provider.dart';
 
 /// 设置页面
@@ -45,6 +49,13 @@ class SettingsPage extends ConsumerWidget {
                 title: l10n.settingsTemplateConfig,
                 showArrow: true,
                 onTap: () => context.push(AppRouter.templateList),
+              ),
+              const Divider(height: 1, indent: 16, endIndent: 16),
+              RippleListTile(
+                leading: const Icon(Icons.apps),
+                title: l10n.aiAppManager,
+                showArrow: true,
+                onTap: () => context.push(AppRouter.aiAppManager),
               ),
             ],
           ),
@@ -177,6 +188,7 @@ class SettingsPage extends ConsumerWidget {
 
           const SizedBox(height: 24),
 
+         
           // ─── 关于应用 ───
           _SectionHeader(title: l10n.settingsAboutSection),
           const SizedBox(height: 8),
@@ -230,6 +242,51 @@ class SettingsPage extends ConsumerWidget {
           ),
 
           const SizedBox(height: 16),
+           // ─── DEBUG 模式：数据库重置 ───
+          if (kDebugMode) ...[
+            _SectionHeader(title: 'DEBUG'),
+            const SizedBox(height: 8),
+            RippleSection(
+              children: [
+                RippleExpansionTile(
+                  leading: const Icon(Icons.delete_sweep_outlined),
+                  title: l10n.debugResetDatabase,
+                  subtitle: l10n.debugResetDatabaseDesc,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            l10n.debugResetDatabaseDesc,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              height: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          FilledButton.tonal(
+                            onPressed: () => _handleDatabaseReset(context, ref),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .error
+                                  .withValues(alpha: 0.15),
+                              foregroundColor: Theme.of(context).colorScheme.error,
+                            ),
+                            child: Text(l10n.debugResetDatabase),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+          ],
         ],
       ),
     );
@@ -256,19 +313,70 @@ class SettingsPage extends ConsumerWidget {
     // 先弹确认框
     final confirmed = await showAnimatedDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.importConfirmTitle),
-        content: Text(l10n.importConfirmMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.btnCancel),
+      builder: (ctx) => Center(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 32),
+          constraints: const BoxConstraints(maxWidth: 400),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
           ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l10n.btnConfirm),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.white.withValues(alpha: 0.8)
+                      : Colors.black.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                      child: Text(
+                        l10n.importConfirmTitle,
+                        style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Text(
+                        l10n.importConfirmMessage,
+                        style: Theme.of(ctx).textTheme.bodyMedium,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.of(ctx).pop(false),
+                            child: Text(l10n.btnCancel),
+                          ),
+                          const SizedBox(width: 12),
+                          FilledButton(
+                            onPressed: () => Navigator.of(ctx).pop(true),
+                            child: Text(l10n.btnConfirm),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ],
+        ),
       ),
     );
 
@@ -285,6 +393,94 @@ class SettingsPage extends ConsumerWidget {
       toast.showError(l10n.toastImportInvalidFile);
     } catch (e) {
       toast.showError(l10n.toastImportFailed(e.toString()));
+    }
+  }
+
+  /// 处理数据库重置（DEBUG 模式）
+  void _handleDatabaseReset(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    final toast = ref.read(toastProvider.notifier);
+
+    // 弹确认框
+    final confirmed = await showAnimatedDialog<bool>(
+      context: context,
+      builder: (ctx) => Center(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 32),
+          constraints: const BoxConstraints(maxWidth: 400),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.white.withValues(alpha: 0.8)
+                      : Colors.black.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                      child: Text(
+                        l10n.debugResetConfirmTitle,
+                        style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Text(
+                        l10n.debugResetConfirmMessage,
+                        style: Theme.of(ctx).textTheme.bodyMedium,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.of(ctx).pop(false),
+                            child: Text(l10n.btnCancel),
+                          ),
+                          const SizedBox(width: 12),
+                          FilledButton(
+                            onPressed: () => Navigator.of(ctx).pop(true),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: Theme.of(ctx).colorScheme.error,
+                            ),
+                            child: Text(l10n.btnConfirm),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      await ref.read(databaseResetProvider.notifier).resetAllDatabases();
+      toast.showSuccess(l10n.debugResetSuccess);
+    } catch (e) {
+      toast.showError(l10n.debugResetFailed);
     }
   }
 

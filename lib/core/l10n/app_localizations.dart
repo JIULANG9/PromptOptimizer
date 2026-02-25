@@ -1063,6 +1063,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get Started'**
   String get onboardingCtaButton;
+
+  /// No description provided for @aiAppManager.
+  ///
+  /// In en, this message translates to:
+  /// **'AI App Manager'**
+  String get aiAppManager;
+
+  /// No description provided for @enabledApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get enabledApps;
+
+  /// No description provided for @disabledApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get disabledApps;
+
+  /// No description provided for @addCustomApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Add App'**
+  String get addCustomApp;
+
+  /// No description provided for @appNotInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'App not installed. Go to app store?'**
+  String get appNotInstalled;
+
+  /// No description provided for @goDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get goDownload;
+
+  /// No description provided for @launchSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard and launched'**
+  String get launchSuccess;
+
+  /// No description provided for @launchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch failed'**
+  String get launchFailed;
+
+  /// No description provided for @searchApps.
+  ///
+  /// In en, this message translates to:
+  /// **'Search apps'**
+  String get searchApps;
+
+  /// No description provided for @addAppSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'App added successfully'**
+  String get addAppSuccess;
+
+  /// No description provided for @addAppFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add app'**
+  String get addAppFailed;
+
+  /// No description provided for @deleteAppSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'App deleted successfully'**
+  String get deleteAppSuccess;
+
+  /// No description provided for @deleteAppFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete app'**
+  String get deleteAppFailed;
+
+  /// No description provided for @toggleAppFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to toggle app status'**
+  String get toggleAppFailed;
+
+  /// No description provided for @updatePositionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update app position'**
+  String get updatePositionFailed;
+
+  /// No description provided for @openStoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open app store'**
+  String get openStoreFailed;
+
+  /// No description provided for @quickLaunchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Launch'**
+  String get quickLaunchTitle;
+
+  /// No description provided for @debugResetDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Database (DEBUG)'**
+  String get debugResetDatabase;
+
+  /// No description provided for @debugResetDatabaseDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all data and restore default configuration'**
+  String get debugResetDatabaseDesc;
+
+  /// No description provided for @debugResetConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Reset'**
+  String get debugResetConfirmTitle;
+
+  /// No description provided for @debugResetConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will clear all data (API configs, templates, history, etc.) and restore defaults. Continue?'**
+  String get debugResetConfirmMessage;
+
+  /// No description provided for @debugResetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Database reset successfully'**
+  String get debugResetSuccess;
+
+  /// No description provided for @debugResetFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Database reset failed'**
+  String get debugResetFailed;
 }
 
 class _AppLocalizationsDelegate

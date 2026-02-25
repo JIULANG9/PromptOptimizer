@@ -30,10 +30,12 @@ class _ResultPanelState extends ConsumerState<ResultPanel> {
   String? _lastOptimizedPrompt;
   bool _isUserEditing = false;
   Timer? _editingResetTimer;
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
     _textController = TextEditingController(
       text: widget.optimizationState.optimizedPrompt,
     );
@@ -73,6 +75,8 @@ class _ResultPanelState extends ConsumerState<ResultPanel> {
         TextPosition(offset: widget.optimizationState.optimizedPrompt.length),
       );
       _lastOptimizedPrompt = widget.optimizationState.optimizedPrompt;
+
+      _autoScrollToBottom();
     }
     // 仅在优化完成且用户不在编辑状态时更新控制器内容
     else if (widget.optimizationState.optimizedPrompt != _lastOptimizedPrompt &&
@@ -90,8 +94,22 @@ class _ResultPanelState extends ConsumerState<ResultPanel> {
   @override
   void dispose() {
     _editingResetTimer?.cancel();
+    _scrollController.dispose();
     _textController.dispose();
     super.dispose();
+  }
+
+  void _autoScrollToBottom() {
+    if (!_scrollController.hasClients) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) return;
+      final maxScrollExtent = _scrollController.position.maxScrollExtent;
+      _scrollController.animateTo(
+        maxScrollExtent,
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   @override
@@ -191,6 +209,7 @@ class _ResultPanelState extends ConsumerState<ResultPanel> {
                 autofocus: false,
                 child: TextField(
                   controller: _textController,
+                  scrollController: _scrollController,
                   maxLines: null,
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
@@ -228,6 +247,7 @@ class _ResultPanelState extends ConsumerState<ResultPanel> {
                 style: TextStyle(color: theme.colorScheme.error, fontSize: 13),
               ),
             ),
+
         ],
       ),
     );

@@ -503,4 +503,74 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get onboardingCtaButton => '开始体验';
+
+  @override
+  String get aiAppManager => 'AI 应用管理';
+
+  @override
+  String get enabledApps => '已启用';
+
+  @override
+  String get disabledApps => '未启用';
+
+  @override
+  String get addCustomApp => '添加应用';
+
+  @override
+  String get appNotInstalled => '该应用未安装，是否前往应用商店下载？';
+
+  @override
+  String get goDownload => '去下载';
+
+  @override
+  String get launchSuccess => '已复制到剪贴板并跳转';
+
+  @override
+  String get launchFailed => '跳转失败';
+
+  @override
+  String get searchApps => '搜索应用';
+
+  @override
+  String get addAppSuccess => '添加应用成功';
+
+  @override
+  String get addAppFailed => '添加应用失败';
+
+  @override
+  String get deleteAppSuccess => '删除应用成功';
+
+  @override
+  String get deleteAppFailed => '删除应用失败';
+
+  @override
+  String get toggleAppFailed => '切换应用状态失败';
+
+  @override
+  String get updatePositionFailed => '更新应用位置失败';
+
+  @override
+  String get openStoreFailed => '打开应用商店失败';
+
+  @override
+  String get quickLaunchTitle => '快速跳转';
+
+  @override
+  String get debugResetDatabase => '重置数据库（DEBUG）';
+
+  @override
+  String get debugResetDatabaseDesc => '清空所有数据并恢复默认配置';
+
+  @override
+  String get debugResetConfirmTitle => '确认重置';
+
+  @override
+  String get debugResetConfirmMessage =>
+      '此操作将清空所有数据（API配置、模板、历史记录等）并恢复默认配置。确定继续？';
+
+  @override
+  String get debugResetSuccess => '数据库重置成功';
+
+  @override
+  String get debugResetFailed => '数据库重置失败';
 }

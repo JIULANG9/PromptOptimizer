@@ -9,6 +9,7 @@ import '../../../../core/routing/app_router.dart';
 import '../../../widgets/glass/glass_widgets.dart';
 import '../../../widgets/item/ripple_list_tile.dart';
 import '../../../widgets/toast/toast_controller.dart';
+import '../providers/version_provider.dart';
 
 /// 关于应用页面
 class AboutAppPage extends ConsumerWidget {
@@ -76,9 +77,40 @@ class AboutAppPage extends ConsumerWidget {
                 const SizedBox(height: 16),
 
                 // Version (Clickable to copy)
-                GestureDetector(
-                  onTap: () => _copyVersion(context, ref),
-                  child: Container(
+                ref.watch(versionProvider).when(
+                  data: (version) => GestureDetector(
+                    onTap: () => _copyVersion(context, ref, version),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            l10n.aboutAppVersion(version),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.copy_outlined,
+                            size: 16,
+                            color: theme.colorScheme.primary.withValues(alpha: 0.7),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  loading: () => Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withValues(alpha: 0.1),
@@ -90,21 +122,44 @@ class AboutAppPage extends ConsumerWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
                         Text(
-                          l10n.aboutAppVersion('2.0.2'),
+                          'v...',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: theme.colorScheme.primary,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Icon(
-                          Icons.copy_outlined,
-                          size: 16,
-                          color: theme.colorScheme.primary.withValues(alpha: 0.7),
-                        ),
                       ],
+                    ),
+                  ),
+                  error: (error, stackTrace) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Text(
+                      l10n.aboutAppVersion('unknown'),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: theme.colorScheme.primary,
+                      ),
                     ),
                   ),
                 ),
@@ -183,9 +238,9 @@ class AboutAppPage extends ConsumerWidget {
   }
 
   /// 复制版本号到剪贴板
-  void _copyVersion(BuildContext context, WidgetRef ref) {
+  void _copyVersion(BuildContext context, WidgetRef ref, String version) {
     final l10n = AppLocalizations.of(context)!;
-    Clipboard.setData(const ClipboardData(text: '2.0.2'));
+    Clipboard.setData(ClipboardData(text: version));
     ref.read(toastProvider.notifier).showSuccess(l10n.toastCopiedVersion);
   }
 

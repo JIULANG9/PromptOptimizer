@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,7 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../widgets/glass/glass_widgets.dart';
 import '../../../widgets/toast/toast_controller.dart';
+import '../../domain/entities/optimization_state.dart';
 import '../providers/optimization_provider.dart';
+import '../widgets/ai_app_launcher_section.dart';
 import '../widgets/result_panel.dart';
 
 /// 移动端优化结果页面
@@ -37,11 +41,29 @@ class ResultPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: ResultPanel(
-        optimizationState: optState,
-        onTextChanged: (text) =>
-            ref.read(optimizationProvider.notifier).updateOptimizedPrompt(text),
-      ),
+      body: (Platform.isAndroid || Platform.isIOS) &&
+              optState.status == OptimizationStatus.success
+          ? Column(
+              children: [
+                Expanded(
+                  child: ResultPanel(
+                    optimizationState: optState,
+                    onTextChanged: (text) => ref
+                        .read(optimizationProvider.notifier)
+                        .updateOptimizedPrompt(text),
+                  ),
+                ),
+                AIAppLauncherSection(
+                  promptText: optState.optimizedPrompt,
+                ),
+              ],
+            )
+          : ResultPanel(
+              optimizationState: optState,
+              onTextChanged: (text) => ref
+                  .read(optimizationProvider.notifier)
+                  .updateOptimizedPrompt(text),
+            ),
     );
   }
 }

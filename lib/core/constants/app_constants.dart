@@ -7,6 +7,12 @@ class AppConstants {
   /// Hive Box 名称，用于存储 UI 偏好设置（主题、语言）
   static const String settingsBoxName = 'app_settings_ui';
 
+  /// Hive Box 名称，用于存储 AI 应用启动器折叠状态
+  static const String aiAppLauncherBoxName = 'ai_app_launcher_state';
+
+  /// AI 应用启动器折叠状态的 Key
+  static const String aiAppLauncherCollapsedKey = 'is_collapsed';
+
   // ─── 默认 API 配置 ───
   /// 默认 API 基地址（阿里云 DashScope 兼容模式）
   static const String defaultBaseUrl =
@@ -51,4 +57,46 @@ class AppConstants {
 
   /// 提示词摘要最大长度
   static const int promptSummaryMaxLength = 50;
+
+  // ─── AI 应用深度跳转 ───
+  /// 内置 AI 应用配置（硬编码，方便后期调整）
+  static const List<Map<String, String>> builtInAIApps = [
+ 
+    {
+      'name': '通义千问',
+      'scheme': 'tongyi://',
+      'iconPath': 'assets/icon/icon_tongyi_qianwen.svg',
+    },
+      {
+      'name': 'Kimi',
+      'scheme': 'kimi://',
+      'iconPath': 'assets/icon/icon_kimi.svg',
+    },
+       {
+      'name': '豆包',
+      'scheme': 'doubao://',
+      'iconPath': 'assets/icon/icon_doubao.svg',
+    },
+    // {
+    //   'name': '元宝',
+    //   'scheme': 'hunyuan://',
+    //   'iconPath': 'assets/icon/icon_tencent_yuanbao.svg',
+    // },
+    // {
+    //   'name': 'DeepSeek',
+    //   'scheme': 'dpsk://chat/new',
+    //   'iconPath': 'assets/icon/icon_deepseek.svg',
+    // },
+    // {
+    //   'name': '文心一言',
+    //   'scheme': 'baiduwanhua://',
+    //   'iconPath': 'assets/icon/icon_wenxinyiyan.svg',
+    // },
+  
+    // {
+    //   'name': '讯飞星火',
+    //   'scheme': 'sparkdesk://',
+    //   'iconPath': 'assets/icon/icon_xunfei_xinghuo.svg',
+    // },
+  ];
 }

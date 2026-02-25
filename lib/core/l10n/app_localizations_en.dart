@@ -517,4 +517,75 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingCtaButton => 'Get Started';
+
+  @override
+  String get aiAppManager => 'AI App Manager';
+
+  @override
+  String get enabledApps => 'Enabled';
+
+  @override
+  String get disabledApps => 'Disabled';
+
+  @override
+  String get addCustomApp => 'Add App';
+
+  @override
+  String get appNotInstalled => 'App not installed. Go to app store?';
+
+  @override
+  String get goDownload => 'Download';
+
+  @override
+  String get launchSuccess => 'Copied to clipboard and launched';
+
+  @override
+  String get launchFailed => 'Launch failed';
+
+  @override
+  String get searchApps => 'Search apps';
+
+  @override
+  String get addAppSuccess => 'App added successfully';
+
+  @override
+  String get addAppFailed => 'Failed to add app';
+
+  @override
+  String get deleteAppSuccess => 'App deleted successfully';
+
+  @override
+  String get deleteAppFailed => 'Failed to delete app';
+
+  @override
+  String get toggleAppFailed => 'Failed to toggle app status';
+
+  @override
+  String get updatePositionFailed => 'Failed to update app position';
+
+  @override
+  String get openStoreFailed => 'Failed to open app store';
+
+  @override
+  String get quickLaunchTitle => 'Quick Launch';
+
+  @override
+  String get debugResetDatabase => 'Reset Database (DEBUG)';
+
+  @override
+  String get debugResetDatabaseDesc =>
+      'Clear all data and restore default configuration';
+
+  @override
+  String get debugResetConfirmTitle => 'Confirm Reset';
+
+  @override
+  String get debugResetConfirmMessage =>
+      'This will clear all data (API configs, templates, history, etc.) and restore defaults. Continue?';
+
+  @override
+  String get debugResetSuccess => 'Database reset successfully';
+
+  @override
+  String get debugResetFailed => 'Database reset failed';
 }

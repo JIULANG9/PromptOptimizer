@@ -1,7 +1,7 @@
 name: "prompt_optimizer"
 description: "Prompt Optimizer - A cross-platform AI prompt optimization tool powered by JIULANG9."
 publish_to: 'none'
-version: 2.0.6+206
+version: 2.1.0+210
 
 environment:
   sdk: ^3.10.3
@@ -42,6 +42,10 @@ dependencies:
   image_gallery_saver_plus: ^4.0.1
   # 打开链接
   url_launcher: ^6.3.0
+  # 获取应用版本信息
+  package_info_plus: ^8.0.0
+  # SVG 图标支持
+  flutter_svg: ^2.0.10
   # JSON序列化注解
   json_annotation: ^4.9.0
   freezed_annotation: ^2.4.4
@@ -81,3 +85,4 @@ flutter:
   assets:
     - assets/images/
     - assets/documents/
+    - assets/icon/

@@ -7,6 +7,7 @@ import '../../features/history/presentation/pages/history_list_page.dart';
 import '../../features/optimization/presentation/pages/home_page.dart';
 import '../../features/optimization/presentation/pages/result_page.dart';
 import '../../features/settings/presentation/pages/about_app_page.dart';
+import '../../features/ai_app_launcher/presentation/pages/ai_app_manager_page.dart';
 import '../../features/settings/presentation/pages/discussion_group_page.dart';
 import '../../features/settings/presentation/pages/open_source_page.dart';
 import '../../features/settings/presentation/pages/privacy_policy_page.dart';
@@ -35,6 +36,7 @@ class AppRouter {
   static const String userAgreement = '/settings/user-agreement';
   static const String openSource = '/settings/open-source';
   static const String discussionGroup = '/settings/discussion-group';
+  static const String aiAppManager = '/settings/ai-app-manager';
   static const String historyList = '/history';
   static const String historyDetail = '/history/:id';
 
@@ -129,6 +131,12 @@ class AppRouter {
       GoRoute(
         path: discussionGroup,
         builder: (context, state) => const DiscussionGroupPage(),
+      ),
+
+      // ─── AI 应用管理 ───
+      GoRoute(
+        path: aiAppManager,
+        builder: (context, state) => const AIAppManagerPage(),
       ),
 
       // ─── 历史记录列表 ───

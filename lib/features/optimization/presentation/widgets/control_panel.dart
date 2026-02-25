@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +10,7 @@ import '../../../api_config/presentation/providers/api_config_provider.dart';
 import '../../../template/presentation/providers/template_provider.dart';
 import '../../../widgets/dialogs/animated_dialog.dart';
 import '../../../widgets/glass/glass_widgets.dart';
+import 'glass_selection_item.dart';
 import '../../../widgets/toast/toast_controller.dart';
 import '../../../widgets/toast/toast_models.dart';
 import '../providers/optimization_provider.dart';
@@ -95,62 +98,73 @@ class ControlPanel extends ConsumerWidget {
     showAnimatedDialog(
       context: context,
       builder: (ctx) => Center(
-        child: Material(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
-          clipBehavior: Clip.antiAlias,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 0),
-            constraints: const BoxConstraints(maxWidth: 400, maxHeight: 480),
-            width: MediaQuery.of(context).size.width - 64,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-                  child: Text(
-                    l10n.labelModelSelect,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 32),
+          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 480),
+          width: MediaQuery.of(context).size.width - 64,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.white.withValues(alpha: 0.8)
+                      : Colors.black.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    width: 1,
                   ),
                 ),
-                const Divider(height: 1),
-                Flexible(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    itemCount: configs.length,
-                    itemBuilder: (_, index) {
-                      final config = configs[index];
-                      final isSelected = config.id == currentId;
-                      return ListTile(
-                        leading: Icon(
-                          isSelected
-                              ? Icons.radio_button_checked
-                              : Icons.radio_button_off,
-                          color: isSelected
-                              ? Theme.of(context).colorScheme.primary
-                              : null,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                        child: Text(
+                          l10n.labelModelSelect,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                        title: Text(config.name),
-                        subtitle: Text(config.modelId),
-                        onTap: () {
-                          ref
-                              .read(optimizationProvider.notifier)
-                              .selectApiConfig(config.id);
-                          Navigator.pop(ctx);
-                        },
-                      );
-                    },
-                  ),
+                      ),
+                      const Divider(height: 1),
+                      Flexible(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 3),
+                          itemCount: configs.length,
+                          itemBuilder: (_, index) {
+                            final config = configs[index];
+                            final isSelected = config.id == currentId;
+                            return GlassSelectionItem(
+                              title: config.name,
+                              subtitle: config.modelId,
+                              isSelected: isSelected,
+                              onTap: () {
+                                ref.read(optimizationProvider.notifier)
+                                    .selectApiConfig(config.id);
+                                Navigator.pop(ctx);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
       ),
+    ),
     );
   }
 
@@ -166,67 +180,76 @@ class ControlPanel extends ConsumerWidget {
     showAnimatedDialog(
       context: context,
       builder: (ctx) => Center(
-        child: Material(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
-          clipBehavior: Clip.antiAlias,
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 400, maxHeight: 480),
-            width: MediaQuery.of(context).size.width - 64,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-                  child: Text(
-                    l10n.labelTemplateSelect,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 32),
+          constraints: const BoxConstraints(maxWidth: 400, maxHeight: 480),
+          width: MediaQuery.of(context).size.width - 64,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.white.withValues(alpha: 0.8)
+                      : Colors.black.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    width: 1,
                   ),
                 ),
-                const Divider(height: 1),
-                Flexible(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    itemCount: filtered.length,
-                    itemBuilder: (_, index) {
-                      final template = filtered[index];
-                      final isSelected = template.id == currentId;
-                      return ListTile(
-                        leading: Icon(
-                          isSelected
-                              ? Icons.radio_button_checked
-                              : Icons.radio_button_off,
-                          color: isSelected
-                              ? Theme.of(context).colorScheme.primary
-                              : null,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                        child: Text(
+                          l10n.labelTemplateSelect,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                        title: Text(template.name),
-                        subtitle: template.description.isNotEmpty
-                            ? Text(
-                                template.description,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            : null,
-                        onTap: () {
-                          ref
-                              .read(optimizationProvider.notifier)
-                              .selectTemplate(template.id);
-                          Navigator.pop(ctx);
-                        },
-                      );
-                    },
-                  ),
+                      ),
+                      const Divider(height: 1),
+                      Flexible(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.symmetric(vertical: 3,horizontal: 3),
+                          itemCount: filtered.length,
+                          itemBuilder: (_, index) {
+                            final template = filtered[index];
+                            final isSelected = template.id == currentId;
+                            return GlassSelectionItem(
+                              title: template.name,
+                              subtitle: template.description.isNotEmpty
+                                  ? template.description
+                                  : null,
+                              isSelected: isSelected,
+                              onTap: () {
+                                ref
+                                    .read(optimizationProvider.notifier)
+                                    .selectTemplate(template.id);
+                                Navigator.pop(ctx);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
       ),
+    ),
     );
   }
 }

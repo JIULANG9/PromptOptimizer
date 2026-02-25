@@ -7,6 +7,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/routing/app_router.dart';
 import '../../../widgets/glass/glass_widgets.dart';
 import '../providers/history_provider.dart';
+import '../widgets/history_item.dart';
 
 /// 历史记录列表页面
 class HistoryListPage extends ConsumerStatefulWidget {
@@ -90,53 +91,11 @@ class _HistoryListPageState extends ConsumerState<HistoryListPage> {
                     margin: const EdgeInsets.symmetric(vertical: 4),
                     borderRadius: BorderRadius.circular(12),
                     blurSigma: 15,
-                    child: ListTile(
-                      title: Text(
-                        history.promptSummary,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 6),
-                        child: Row(
-                          children: [
-                            Text(
-                              history.formattedTime,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color:
-                                    (isUser
-                                            ? theme.colorScheme.primary
-                                            : theme.colorScheme.secondary)
-                                        .withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                isUser ? 'User' : 'System',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: isUser
-                                      ? theme.colorScheme.primary
-                                      : theme.colorScheme.secondary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      trailing: const Icon(Icons.chevron_right, size: 20),
+                    child: HistoryItem(
+                      title: history.promptSummary,
+                      time: history.formattedTime,
+                      type: isUser ? 'User' : 'System',
+                      isUserType: isUser,
                       onTap: () =>
                           context.push(AppRouter.historyDetailPath(history.id)),
                     ),
