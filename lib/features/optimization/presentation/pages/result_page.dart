@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +19,9 @@ class ResultPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final optState = ref.watch(optimizationProvider);
+    final isMobilePlatform = !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS);
 
     return GlassScaffold(
       appBar: AppBar(
@@ -41,7 +43,7 @@ class ResultPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: (Platform.isAndroid || Platform.isIOS) &&
+      body: (isMobilePlatform || kIsWeb) &&
               optState.status == OptimizationStatus.success
           ? Column(
               children: [
