@@ -40,9 +40,6 @@ class AIAppManager extends AsyncNotifier<void> {
     _repository = ref.watch(aiAppRepositoryProvider);
     _launchUseCase = LaunchAIAppUseCase();
     _openStoreUseCase = OpenAppStoreUseCase();
-
-    // 初始化默认应用
-    await _repository.initializeDefaultApps();
   }
 
   /// 切换应用启用状态
@@ -115,10 +112,11 @@ class AIAppManager extends AsyncNotifier<void> {
         return;
       }
 
-      // 启动应用
+      // 启动应用（优先 Scheme 跳转，失败则用包名兜底）
       final success = await _launchUseCase(
-        scheme: app.scheme,
+        scheme: app.actualScheme,
         promptText: promptText,
+        packageName: app.actualPackageName,
       );
 
       if (success) {

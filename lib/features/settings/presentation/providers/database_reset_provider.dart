@@ -4,7 +4,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../database/app_database.dart';
 import '../../../../database/seed/database_seeder.dart';
-import '../../../../database/seed/default_ai_apps.dart';
 
 /// 数据库重置提供者
 final databaseResetProvider =
@@ -43,6 +42,10 @@ class DatabaseResetNotifier extends StateNotifier<AsyncValue<void>> {
       // 清空 AI 应用启动器状态 Box
       final aiAppLauncherBox = Hive.box(AppConstants.aiAppLauncherBoxName);
       await aiAppLauncherBox.clear();
+
+      // 清空内置 AI 应用的 isEnabled 状态
+      final aiAppEnabledStatesBox = Hive.box<bool>('ai_app_enabled_states');
+      await aiAppEnabledStatesBox.clear();
     } catch (e) {
       throw Exception('Failed to reset Hive databases: $e');
     }
@@ -59,14 +62,11 @@ class DatabaseResetNotifier extends StateNotifier<AsyncValue<void>> {
       await database.delete(database.promptTemplates).go();
       await database.delete(database.optimizationHistories).go();
 
-      // 重新初始化默认数据
+      // 重新初始化默认数据（仅模板和 API 配置）
       final seeder = DatabaseSeeder(database.templateDao, database.apiConfigDao);
       await seeder.seedAll();
 
-      // 重新插入默认 AI 应用配置
-      for (final app in defaultAIApps) {
-        await database.into(database.aIAppConfigs).insert(app);
-      }
+      // 内置 AI 应用不再存储到数据库，从 AppConstants 动态读取
     } catch (e) {
       throw Exception('Failed to reset SQLite database: $e');
     }

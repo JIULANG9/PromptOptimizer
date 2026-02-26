@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../core/constants/app_constants.dart';
 import '../../../../database/app_database.dart' as db;
 
 part 'ai_app_config.freezed.dart';
@@ -21,6 +22,47 @@ class AIAppConfigModel with _$AIAppConfigModel {
   }) = _AIAppConfigModel;
 
   const AIAppConfigModel._();
+
+  /// 获取实际使用的配置（内置应用从 AppConstants 获取，自定义应用使用数据库值）
+  Map<String, String>? get _builtinConfig {
+    if (!isBuiltin) return null;
+    
+    try {
+      return AppConstants.builtInAIApps.firstWhere(
+        (app) => app['name'] == name,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// 获取实际使用的 URL Scheme（内置应用从常量获取）
+  String get actualScheme => _builtinConfig?['scheme'] ?? scheme;
+
+  /// 获取实际使用的图标路径（内置应用从常量获取）
+  String get actualIconPath => _builtinConfig?['iconPath'] ?? iconPath;
+
+  /// 获取实际使用的包名（内置应用从常量获取）
+  String? get actualPackageName => _builtinConfig?['packageName'];
+
+  /// 从常量创建内置应用（不存储到数据库）
+  factory AIAppConfigModel.fromBuiltin({
+    required Map<String, String> builtinConfig,
+    required int position,
+    required bool isEnabled,
+  }) {
+    final name = builtinConfig['name']!;
+    return AIAppConfigModel(
+      id: 'builtin_${name.hashCode}',
+      name: name,
+      scheme: builtinConfig['scheme']!,
+      iconPath: builtinConfig['iconPath']!,
+      isEnabled: isEnabled,
+      position: position,
+      isBuiltin: true,
+      createdAt: DateTime.now(),
+    );
+  }
 
   /// 从 JSON 反序列化
   factory AIAppConfigModel.fromJson(Map<String, dynamic> json) =>

@@ -8,11 +8,13 @@ import 'hive_init.dart';
 class AppBootstrapResult {
   final Box settingsBox;
   final Box aiAppLauncherBox;
+  final Box<bool> aiAppEnabledStatesBox;
   final AppDatabase database;
 
   const AppBootstrapResult({
     required this.settingsBox,
     required this.aiAppLauncherBox,
+    required this.aiAppEnabledStatesBox,
     required this.database,
   });
 }
@@ -21,6 +23,7 @@ class AppBootstrapper {
   Future<AppBootstrapResult> bootstrap() async {
     final settingsBox = await openSettingsBox(AppConstants.settingsBoxName);
     final aiAppLauncherBox = await openSettingsBox(AppConstants.aiAppLauncherBoxName);
+    final aiAppEnabledStatesBox = await Hive.openBox<bool>('ai_app_enabled_states');
 
     final database = AppDatabase();
 
@@ -30,6 +33,7 @@ class AppBootstrapper {
     return AppBootstrapResult(
       settingsBox: settingsBox,
       aiAppLauncherBox: aiAppLauncherBox,
+      aiAppEnabledStatesBox: aiAppEnabledStatesBox,
       database: database,
     );
   }

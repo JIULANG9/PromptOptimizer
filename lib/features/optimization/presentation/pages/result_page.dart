@@ -23,7 +23,23 @@ class ResultPage extends ConsumerWidget {
         (defaultTargetPlatform == TargetPlatform.android ||
             defaultTargetPlatform == TargetPlatform.iOS);
 
+    Widget buildMovableResultPanel() {
+      final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+      return AnimatedPadding(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        padding: EdgeInsets.only(bottom: bottomInset),
+        child: ResultPanel(
+          optimizationState: optState,
+          onTextChanged: (text) => ref
+              .read(optimizationProvider.notifier)
+              .updateOptimizedPrompt(text),
+        ),
+      );
+    }
+
     return GlassScaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(l10n.labelOptimizedPrompt),
         actions: [
@@ -48,24 +64,14 @@ class ResultPage extends ConsumerWidget {
           ? Column(
               children: [
                 Expanded(
-                  child: ResultPanel(
-                    optimizationState: optState,
-                    onTextChanged: (text) => ref
-                        .read(optimizationProvider.notifier)
-                        .updateOptimizedPrompt(text),
-                  ),
+                  child: buildMovableResultPanel(),
                 ),
                 AIAppLauncherSection(
                   promptText: optState.optimizedPrompt,
                 ),
               ],
             )
-          : ResultPanel(
-              optimizationState: optState,
-              onTextChanged: (text) => ref
-                  .read(optimizationProvider.notifier)
-                  .updateOptimizedPrompt(text),
-            ),
+          : buildMovableResultPanel(),
     );
   }
 }

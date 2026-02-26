@@ -58,7 +58,7 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
-        <!-- AI 应用 URL Scheme 查询声明 -->
+        <!-- AI 应用 URL Scheme 查询声明（需与 AppConstants.builtInAIApps 保持一致） -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="doubao" />
@@ -69,15 +69,7 @@
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="yuanbao" />
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="dpsk" />
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="yiyanapp" />
+            <data android:scheme="qwen" />
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -85,7 +77,33 @@
         </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="iflytekstar" />
+            <data android:scheme="dpsk" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="hunyuan" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="baiduwanhua" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="sparkdesk" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="zhipuai" />
+        </intent>
+
+        <!-- AI 应用包名查询声明（Android 11+ 包可见性；用于包名兜底跳转） -->
+        <package android:name="com.aliyun.tongyi" />
+        <package android:name="com.moonshot.kimi" />
+        <package android:name="com.larus.nova" />
+        <package android:name="com.deepseek.chat" />
+        <package android:name="com.tencent.hunyuan.app.chat" />
+        <package android:name="com.baidu.newapp" />
+        <package android:name="com.iflytek.spark" />
+        <package android:name="com.zhipuai.qingyang" />
     </queries>
 </manifest>

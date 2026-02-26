@@ -94,10 +94,13 @@ class AIAppButton extends StatelessWidget {
 
   /// 构建应用图标
   Widget _buildIcon() {
+    // 使用实际图标路径（内置应用从 AppConstants 获取）
+    final iconPath = app.actualIconPath;
+    
     // 检查是否为 SVG 图标
-    if (app.iconPath.endsWith('.svg')) {
+    if (iconPath.endsWith('.svg')) {
       return SvgPicture.asset(
-        app.iconPath,
+        iconPath,
         width: 24,
         height: 24,
         placeholderBuilder: (context) => _buildPlaceholder(),
@@ -106,7 +109,7 @@ class AIAppButton extends StatelessWidget {
 
     // PNG/JPG 图标
     return Image.asset(
-      app.iconPath,
+      iconPath,
       width: 24,
       height: 24,
       errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),

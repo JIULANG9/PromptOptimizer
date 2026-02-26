@@ -61,42 +61,60 @@ class AppConstants {
   // ─── AI 应用深度跳转 ───
   /// 内置 AI 应用配置（硬编码，方便后期调整）
   static const List<Map<String, String>> builtInAIApps = [
- 
+
     {
       'name': '通义千问',
       'scheme': 'tongyi://',
       'iconPath': 'assets/icon/icon_tongyi_qianwen.svg',
+      'packageName': 'com.aliyun.tongyi', // 通义千问Android包名
     },
-      {
+    {
+      'name': 'Qwen Chat',
+      'scheme': 'qwen://',
+      'iconPath': 'assets/icon/icon_tongyi_qianwen.svg',
+      'packageName': 'com.aliyun.tongyi', // 通义千问Android包名
+    },
+    {
       'name': 'Kimi',
       'scheme': 'kimi://',
       'iconPath': 'assets/icon/icon_kimi.svg',
+      'packageName': 'com.moonshot.kimi', // Kimi智能助手Android包名
     },
-       {
+    {
       'name': '豆包',
       'scheme': 'doubao://',
       'iconPath': 'assets/icon/icon_doubao.svg',
+      'packageName': 'com.larus.nova', // 豆包Android包名
     },
-    // {
-    //   'name': '元宝',
-    //   'scheme': 'hunyuan://',
-    //   'iconPath': 'assets/icon/icon_tencent_yuanbao.svg',
-    // },
-    // {
-    //   'name': 'DeepSeek',
-    //   'scheme': 'dpsk://chat/new',
-    //   'iconPath': 'assets/icon/icon_deepseek.svg',
-    // },
-    // {
-    //   'name': '文心一言',
-    //   'scheme': 'baiduwanhua://',
-    //   'iconPath': 'assets/icon/icon_wenxinyiyan.svg',
-    // },
-  
-    // {
-    //   'name': '讯飞星火',
-    //   'scheme': 'sparkdesk://',
-    //   'iconPath': 'assets/icon/icon_xunfei_xinghuo.svg',
-    // },
+    {
+      'name': 'DeepSeek',
+      'scheme': 'dpsk://chat/new',
+      'iconPath': 'assets/icon/icon_deepseek.svg',
+      'packageName': 'com.deepseek.chat', // DeepSeekAndroid包名
+    },
+    {
+      'name': '元宝',
+      'scheme': 'hunyuan://chat',
+      'iconPath': 'assets/icon/icon_tencent_yuanbao.svg',
+      'packageName': 'com.tencent.hunyuan.app.chat', // 腾讯元宝Android包名
+    },
+    {
+      'name': '文心一言',
+      'scheme': 'baiduwanhua://',
+      'iconPath': 'assets/icon/icon_wenxinyiyan.svg',
+      'packageName': 'com.baidu.newapp', // 文心一言Android包名
+    },
+    {
+      'name': '讯飞星火',
+      'scheme': 'sparkdesk://',
+      'iconPath': 'assets/icon/icon_xunfei_xinghuo.svg',
+      'packageName': 'com.iflytek.spark', // 讯飞星火Android包名
+    },
+     {
+       'name': '智谱AI',
+       'scheme': 'zhipuai://',
+       'iconPath': 'assets/icon/icom.zhipu.svg',
+       'packageName': 'com.zhipuai.qingyang', // 智谱AIAndroid包名
+     }
   ];
 }

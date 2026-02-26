@@ -6,7 +6,6 @@ import 'daos/ai_app_config_dao.dart';
 import 'daos/api_config_dao.dart';
 import 'daos/history_dao.dart';
 import 'daos/template_dao.dart';
-import 'seed/default_ai_apps.dart';
 import 'tables/ai_app_configs_table.dart';
 import 'tables/api_configs_table.dart';
 import 'tables/optimization_histories_table.dart';
@@ -35,10 +34,7 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (Migrator m) async {
       await m.createAll();
-      // 全新安装时插入默认 AI 应用配置
-      for (final app in defaultAIApps) {
-        await into(aIAppConfigs).insert(app);
-      }
+      // 内置 AI 应用不再存储到数据库，从 AppConstants 动态读取
     },
     onUpgrade: (Migrator m, int from, int to) async {
       // v1 -> v2: 添加 ApiConfigs.createdAt 字段
@@ -49,13 +45,10 @@ class AppDatabase extends _$AppDatabase {
       if (from < 3) {
         await customStatement('ALTER TABLE api_configs DROP COLUMN is_default');
       }
-      // v3 -> v4: 创建 AIAppConfigs 表并插入默认应用
+      // v3 -> v4: 创建 AIAppConfigs 表（仅存储自定义应用）
       if (from < 4) {
         await m.createTable(aIAppConfigs);
-        // 插入默认 AI 应用配置
-        for (final app in defaultAIApps) {
-          await into(aIAppConfigs).insert(app);
-        }
+        // 内置 AI 应用不再存储到数据库，从 AppConstants 动态读取
       }
     },
   );
