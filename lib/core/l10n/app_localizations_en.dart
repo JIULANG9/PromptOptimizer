@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Prompt Optimizer';
+  String get appTitle => 'PromptOptimization';
 
   @override
   String get tabUserOptimize => 'User Prompt';

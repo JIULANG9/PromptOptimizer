@@ -31,7 +31,7 @@ class PromptOptimizerApp extends ConsumerWidget {
     }
 
     return MaterialApp.router(
-      title: 'Prompt Optimizer',
+      title: 'PromptOptimization',
       debugShowCheckedModeBanner: false,
 
       // 主题
