@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jiulang.prompt.prompt_optimization">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- 基础网络权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
