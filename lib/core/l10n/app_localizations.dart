@@ -812,6 +812,12 @@ abstract class AppLocalizations {
   /// **'Optimization complete'**
   String get toastOptimizeComplete;
 
+  /// No description provided for @toastOptimizeCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimization cancelled'**
+  String get toastOptimizeCancelled;
+
   /// No description provided for @toastTestSuccess.
   ///
   /// In en, this message translates to:

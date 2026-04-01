@@ -16,6 +16,9 @@ enum OptimizationStatus {
 
   /// 发生错误
   error,
+
+  /// 用户取消
+  cancelled,
 }
 
 /// 优化流程状态（MVI 中的 Model）

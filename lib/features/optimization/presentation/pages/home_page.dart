@@ -89,6 +89,13 @@ class _HomePageState extends ConsumerState<HomePage>
           prev?.status != OptimizationStatus.error) {
         ref.read(toastProvider.notifier).showError(next.errorMessage);
       }
+      // 取消 → 显示取消 toast
+      if (next.status == OptimizationStatus.cancelled &&
+          prev?.status != OptimizationStatus.cancelled) {
+        ref
+            .read(toastProvider.notifier)
+            .showInfo(l10n.toastOptimizeCancelled);
+      }
       // 移动端：开始流式时跳转结果页
       if (prev?.status != OptimizationStatus.streaming &&
           next.status == OptimizationStatus.streaming) {
@@ -161,6 +168,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     controller: _promptController,
                     isProcessing: optState.isProcessing,
                     onOptimize: _onOptimize,
+                    onStop: _onStop,
                   ),
                 ),
               ),
@@ -213,6 +221,7 @@ class _HomePageState extends ConsumerState<HomePage>
               controller: _promptController,
               isProcessing: optState.isProcessing,
               onOptimize: _onOptimize,
+              onStop: _onStop,
             ),
           ),
         ),
@@ -247,5 +256,9 @@ class _HomePageState extends ConsumerState<HomePage>
     }
 
     ref.read(optimizationProvider.notifier).optimize(_promptController.text);
+  }
+
+  void _onStop() {
+    ref.read(optimizationProvider.notifier).cancelOptimization();
   }
 }

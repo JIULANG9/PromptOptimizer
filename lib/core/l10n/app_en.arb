@@ -149,6 +149,7 @@
   "toastDeleted": "Deleted successfully",
   "toastOptimizing": "Optimizing...",
   "toastOptimizeComplete": "Optimization complete",
+  "toastOptimizeCancelled": "Optimization cancelled",
   "toastTestSuccess": "API connection successful",
   "toastSetDefault": "Set as default",
   "toastExportSuccess": "Data exported successfully",

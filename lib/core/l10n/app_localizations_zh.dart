@@ -374,6 +374,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get toastOptimizeComplete => '优化完成';
 
   @override
+  String get toastOptimizeCancelled => '优化已取消';
+
+  @override
   String get toastTestSuccess => 'API 连接成功';
 
   @override

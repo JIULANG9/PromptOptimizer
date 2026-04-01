@@ -10,6 +10,7 @@ class PromptInput extends StatefulWidget {
   final TextEditingController controller;
   final bool isProcessing;
   final VoidCallback onOptimize;
+  final VoidCallback? onStop;
   final VoidCallback? onPaste;
 
   const PromptInput({
@@ -17,6 +18,7 @@ class PromptInput extends StatefulWidget {
     required this.controller,
     required this.isProcessing,
     required this.onOptimize,
+    this.onStop,
     this.onPaste,
   });
 
@@ -41,16 +43,31 @@ class _PromptInputState extends State<PromptInput> {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: widget.isProcessing ? null : widget.onOptimize,
+                onPressed: widget.isProcessing 
+                    ? widget.onStop 
+                    : widget.onOptimize,
                 icon: widget.isProcessing
-                    ? OptimizationTimerDisplay(
-                        color: theme.colorScheme.onPrimary,
-                        fontSize: 14,
-                      )
+                    ? const Icon(Icons.stop)
                     : const Icon(Icons.auto_fix_high),
-                label: Text(
-                  widget.isProcessing ? l10n.toastOptimizing : l10n.btnOptimize,
-                ),
+                label: widget.isProcessing
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(l10n.toastOptimizing),
+                          const SizedBox(width: 8),
+                          OptimizationTimerDisplay(
+                            color: theme.colorScheme.onPrimary,
+                            fontSize: 14,
+                          ),
+                        ],
+                      )
+                    : Text(l10n.btnOptimize),
+                style: widget.isProcessing
+                    ? ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.error,
+                        foregroundColor: theme.colorScheme.onError,
+                      )
+                    : null,
               ),
             ),
           ),

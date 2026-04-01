@@ -205,7 +205,10 @@ class OptimizationNotifier extends StateNotifier<OptimizationState> {
     await _streamSubscription?.cancel();
     _streamSubscription = null;
     if (state.isProcessing) {
-      state = state.copyWith(status: OptimizationStatus.idle);
+      state = state.copyWith(
+        status: OptimizationStatus.cancelled,
+        errorMessage: 'Optimization cancelled by user',
+      );
     }
   }
 

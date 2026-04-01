@@ -149,6 +149,7 @@
   "toastDeleted": "删除成功",
   "toastOptimizing": "正在优化...",
   "toastOptimizeComplete": "优化完成",
+  "toastOptimizeCancelled": "优化已取消",
   "toastTestSuccess": "API 连接成功",
   "toastSetDefault": "已设为默认",
   "toastExportSuccess": "数据导出成功",

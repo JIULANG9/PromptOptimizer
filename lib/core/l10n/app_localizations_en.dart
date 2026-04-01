@@ -380,6 +380,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toastOptimizeComplete => 'Optimization complete';
 
   @override
+  String get toastOptimizeCancelled => 'Optimization cancelled';
+
+  @override
   String get toastTestSuccess => 'API connection successful';
 
   @override
