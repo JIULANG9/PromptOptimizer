@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../database/daos/history_dao.dart';
@@ -18,6 +19,18 @@ class HistoryListState {
     this.errorMessage,
   });
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is HistoryListState &&
+        listEquals(other.histories, histories) &&
+        other.isLoading == isLoading &&
+        other.errorMessage == errorMessage;
+  }
+
+  @override
+  int get hashCode => Object.hash(Object.hashAll(histories), isLoading, errorMessage);
+
   HistoryListState copyWith({
     List<HistoryEntity>? histories,
     bool? isLoading,
@@ -33,11 +46,14 @@ class HistoryListState {
 }
 
 /// 历史记录列表 Notifier（MVI Intent 处理器）
-class HistoryListNotifier extends StateNotifier<HistoryListState> {
-  final HistoryUseCases _useCases;
+class HistoryListNotifier extends Notifier<HistoryListState> {
+  late HistoryUseCases _useCases;
 
-  HistoryListNotifier(this._useCases) : super(const HistoryListState()) {
-    loadHistories();
+  @override
+  HistoryListState build() {
+    _useCases = ref.watch(historyUseCasesProvider);
+    Future.microtask(() => loadHistories());
+    return const HistoryListState();
   }
 
   /// Intent: 加载所有历史记录
@@ -91,6 +107,7 @@ final historyUseCasesProvider = Provider<HistoryUseCases>((ref) {
 
 /// 历史记录列表状态 Provider
 final historyListProvider =
-    StateNotifierProvider<HistoryListNotifier, HistoryListState>((ref) {
-      return HistoryListNotifier(ref.watch(historyUseCasesProvider));
-    }, dependencies: [historyUseCasesProvider]);
+    NotifierProvider<HistoryListNotifier, HistoryListState>(
+      HistoryListNotifier.new,
+      dependencies: [historyUseCasesProvider],
+    );

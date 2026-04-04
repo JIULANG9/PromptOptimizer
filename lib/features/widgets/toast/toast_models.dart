@@ -11,7 +11,7 @@ enum ToastPosition { top, bottom }
 
 /// Toast 操作按钮
 @freezed
-class ToastAction with _$ToastAction {
+abstract class ToastAction with _$ToastAction {
   const factory ToastAction({
     required String label,
     required VoidCallback onPressed,
@@ -20,7 +20,7 @@ class ToastAction with _$ToastAction {
 
 /// Toast 请求数据
 @freezed
-class ToastRequest with _$ToastRequest {
+abstract class ToastRequest with _$ToastRequest {
   const factory ToastRequest({
     /// 唯一标识，用于进度更新或手动移除
     String? id,
@@ -56,7 +56,7 @@ class ToastRequest with _$ToastRequest {
 
 /// Toast 状态
 @freezed
-class ToastState with _$ToastState {
+abstract class ToastState with _$ToastState {
   const factory ToastState({
     /// 当前显示的 Toast
     ToastRequest? current,

@@ -6,15 +6,23 @@ import 'toast_models.dart';
 import 'toast_theme.dart';
 
 /// Toast 控制器 Provider
-final toastProvider = StateNotifierProvider<ToastController, ToastState>((ref) {
-  return ToastController();
-});
+final toastProvider = NotifierProvider<ToastController, ToastState>(
+  ToastController.new,
+);
 
 /// Toast 控制器
-class ToastController extends StateNotifier<ToastState> {
-  ToastController() : super(const ToastState());
-
+class ToastController extends Notifier<ToastState> {
   Timer? _timer;
+
+  @override
+  ToastState build() {
+    // T3.3: Toast 覆盖在所有页面之上，不应被自动暂停
+    ref.keepAlive();
+    ref.onDispose(() {
+      _timer?.cancel();
+    });
+    return const ToastState();
+  }
 
   /// 显示普通消息
   void show(
@@ -259,9 +267,4 @@ class ToastController extends StateNotifier<ToastState> {
     }
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
 }

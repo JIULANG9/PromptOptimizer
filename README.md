@@ -31,7 +31,7 @@
 | 层级 | 技术选型 |
 |------|---------|
 | 架构模式 | MVI (Model-View-Intent) + 单向数据流 |
-| 状态管理 | Riverpod (StateNotifier) |
+| 状态管理 | Riverpod 3.x (Notifier) |
 | 路由 | go_router |
 | 数据库 | Drift (SQLite) — API配置、模板、历史 |
 | KV存储 | Hive — UI偏好设置（主题、语言） |

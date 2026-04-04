@@ -591,4 +591,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debugResetFailed => 'Database reset failed';
+
+  @override
+  String updateDialogTitle(String version) {
+    return 'New Version Available: $version';
+  }
+
+  @override
+  String get btnIgnore => 'Ignore';
+
+  @override
+  String get btnUpdate => 'Update';
+
+  @override
+  String get checkingUpdate => 'Checking for updates...';
+
+  @override
+  String get alreadyLatestVersion => 'Already the latest version';
+
+  @override
+  String checkUpdateFailed(String error) {
+    return 'Update check failed: $error';
+  }
+
+  @override
+  String get settingsCheckUpdate => 'Check for Updates';
 }

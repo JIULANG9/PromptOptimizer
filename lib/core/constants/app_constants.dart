@@ -51,6 +51,22 @@ class AppConstants {
   /// SSE 流式响应结束标记
   static const String sseEndSignal = '[DONE]';
 
+  // ─── 版本更新检查 ───
+  /// 版本检查 API 地址
+  static const String versionCheckApiUrl = 'https://app.jiulang9.com/api/version';
+
+  /// 版本更新忽略时长（毫秒）：3 天
+  static const int updateIgnoreDuration = 3 * 24 * 60 * 60 * 1000;
+
+  /// Hive Box 名称，用于存储版本更新忽略状态
+  static const String versionUpdateBoxName = 'version_update_state';
+
+  /// 版本更新忽略时间戳的 Key
+  static const String updateIgnoreTimestampKey = 'ignore_timestamp';
+
+  /// 被忽略的版本号的 Key
+  static const String updateIgnoredVersionKey = 'ignored_version';
+
   // ─── UI ───
   /// 桌面端双栏布局断点宽度
   static const double desktopBreakpoint = 768.0;

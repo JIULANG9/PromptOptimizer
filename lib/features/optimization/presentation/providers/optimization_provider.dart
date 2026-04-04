@@ -16,21 +16,30 @@ import '../../domain/usecases/optimize_prompt_usecase.dart';
 
 /// 优化流程 Notifier（MVI Intent 处理器）
 /// 管理首页的完整优化状态：Tab 切换、配置选择、流式优化、结果编辑
-class OptimizationNotifier extends StateNotifier<OptimizationState> {
-  final OptimizePromptUseCase _useCase;
-  final SettingsRepository _settingsRepo;
-  final ApiConfigRepository _apiConfigRepo;
-  final TemplateRepository _templateRepo;
+class OptimizationNotifier extends Notifier<OptimizationState> {
+  late OptimizePromptUseCase _useCase;
+  late SettingsRepository _settingsRepo;
+  late ApiConfigRepository _apiConfigRepo;
+  late TemplateRepository _templateRepo;
   StreamSubscription<String>? _streamSubscription;
   Timer? _timer;
 
-  OptimizationNotifier(
-    this._useCase,
-    this._settingsRepo,
-    this._apiConfigRepo,
-    this._templateRepo,
-  ) : super(const OptimizationState()) {
-    _loadPersistedSelections();
+  @override
+  OptimizationState build() {
+    _useCase = ref.watch(optimizePromptUseCaseProvider);
+    _settingsRepo = ref.watch(settingsRepositoryProvider);
+    _apiConfigRepo = ref.watch(apiConfigRepositoryProvider);
+    _templateRepo = ref.watch(templateRepositoryProvider);
+    // T3.3: 防止页面切换时自动暂停流式优化
+    ref.keepAlive();
+    // 注册资源清理回调（替代 dispose()）
+    ref.onDispose(() {
+      _streamSubscription?.cancel();
+      _timer?.cancel();
+    });
+    // 异步加载持久化选择
+    Future.microtask(() => _loadPersistedSelections());
+    return const OptimizationState();
   }
 
   /// 从 Hive 恢复上次的选择，如果没有保存则自动选择第一个可用的模型和模板
@@ -244,12 +253,6 @@ class OptimizationNotifier extends StateNotifier<OptimizationState> {
     _timer = null;
   }
 
-  @override
-  void dispose() {
-    _streamSubscription?.cancel();
-    _timer?.cancel();
-    super.dispose();
-  }
 }
 
 // ─── Providers ───
@@ -281,16 +284,12 @@ final optimizePromptUseCaseProvider = Provider<OptimizePromptUseCase>((ref) {
 
 /// 优化状态 Provider
 final optimizationProvider =
-    StateNotifierProvider<OptimizationNotifier, OptimizationState>((ref) {
-      return OptimizationNotifier(
-        ref.watch(optimizePromptUseCaseProvider),
-        ref.watch(settingsRepositoryProvider),
-        ref.watch(apiConfigRepositoryProvider),
-        ref.watch(templateRepositoryProvider),
-      );
-    }, dependencies: [
-      optimizePromptUseCaseProvider,
-      settingsRepositoryProvider,
-      apiConfigRepositoryProvider,
-      templateRepositoryProvider,
-    ]);
+    NotifierProvider<OptimizationNotifier, OptimizationState>(
+      OptimizationNotifier.new,
+      dependencies: [
+        optimizePromptUseCaseProvider,
+        settingsRepositoryProvider,
+        apiConfigRepositoryProvider,
+        templateRepositoryProvider,
+      ],
+    );

@@ -576,4 +576,29 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get debugResetFailed => '数据库重置失败';
+
+  @override
+  String updateDialogTitle(String version) {
+    return '发现新版本：$version';
+  }
+
+  @override
+  String get btnIgnore => '忽略';
+
+  @override
+  String get btnUpdate => '更新';
+
+  @override
+  String get checkingUpdate => '正在检查更新...';
+
+  @override
+  String get alreadyLatestVersion => '已经是最新版本';
+
+  @override
+  String checkUpdateFailed(String error) {
+    return '检查更新失败：$error';
+  }
+
+  @override
+  String get settingsCheckUpdate => '检查更新';
 }

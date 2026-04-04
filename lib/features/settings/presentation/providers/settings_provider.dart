@@ -6,15 +6,15 @@ import '../../data/settings_repository.dart';
 import '../../domain/entities/app_settings.dart';
 
 /// 设置状态 Notifier（MVI Intent 处理器）
-class SettingsNotifier extends StateNotifier<AppSettings> {
-  final SettingsRepository _repository;
+class SettingsNotifier extends Notifier<AppSettings> {
+  late SettingsRepository _repository;
 
-  SettingsNotifier(this._repository) : super(const AppSettings()) {
-    _loadSettings();
-  }
-
-  void _loadSettings() {
-    state = _repository.getSettings();
+  @override
+  AppSettings build() {
+    _repository = ref.watch(settingsRepositoryProvider);
+    // T3.3: 全局主题/语言状态，不应被自动暂停
+    ref.keepAlive();
+    return _repository.getSettings();
   }
 
   /// Intent: 切换主题模式
@@ -58,8 +58,7 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
 }, dependencies: [settingsBoxProvider]);
 
 /// 设置状态 Provider
-final settingsProvider = StateNotifierProvider<SettingsNotifier, AppSettings>((
-  ref,
-) {
-  return SettingsNotifier(ref.watch(settingsRepositoryProvider));
-}, dependencies: [settingsRepositoryProvider, settingsBoxProvider]);
+final settingsProvider = NotifierProvider<SettingsNotifier, AppSettings>(
+  SettingsNotifier.new,
+  dependencies: [settingsRepositoryProvider, settingsBoxProvider],
+);

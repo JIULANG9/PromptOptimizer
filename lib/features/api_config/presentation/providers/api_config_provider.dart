@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/crypto/aes_crypto_service.dart';
@@ -19,6 +20,18 @@ class ApiConfigListState {
     this.errorMessage,
   });
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ApiConfigListState &&
+        listEquals(other.configs, configs) &&
+        other.isLoading == isLoading &&
+        other.errorMessage == errorMessage;
+  }
+
+  @override
+  int get hashCode => Object.hash(Object.hashAll(configs), isLoading, errorMessage);
+
   ApiConfigListState copyWith({
     List<ApiConfigEntity>? configs,
     bool? isLoading,
@@ -34,11 +47,14 @@ class ApiConfigListState {
 }
 
 /// API 配置列表 Notifier（MVI 中的 Intent 处理器）
-class ApiConfigListNotifier extends StateNotifier<ApiConfigListState> {
-  final ApiConfigUseCases _useCases;
+class ApiConfigListNotifier extends Notifier<ApiConfigListState> {
+  late ApiConfigUseCases _useCases;
 
-  ApiConfigListNotifier(this._useCases) : super(const ApiConfigListState()) {
-    loadConfigs();
+  @override
+  ApiConfigListState build() {
+    _useCases = ref.watch(apiConfigUseCasesProvider);
+    Future.microtask(() => loadConfigs());
+    return const ApiConfigListState();
   }
 
   /// Intent: 加载所有配置
@@ -127,6 +143,7 @@ final apiConfigUseCasesProvider = Provider<ApiConfigUseCases>((ref) {
 
 /// API 配置列表状态 Provider
 final apiConfigListProvider =
-    StateNotifierProvider<ApiConfigListNotifier, ApiConfigListState>((ref) {
-      return ApiConfigListNotifier(ref.watch(apiConfigUseCasesProvider));
-    }, dependencies: [apiConfigUseCasesProvider]);
+    NotifierProvider<ApiConfigListNotifier, ApiConfigListState>(
+      ApiConfigListNotifier.new,
+      dependencies: [apiConfigUseCasesProvider],
+    );

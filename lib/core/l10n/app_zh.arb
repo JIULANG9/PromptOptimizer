@@ -231,5 +231,23 @@
   "debugResetConfirmTitle": "确认重置",
   "debugResetConfirmMessage": "此操作将清空所有数据（API配置、模板、历史记录等）并恢复默认配置。确定继续？",
   "debugResetSuccess": "数据库重置成功",
-  "debugResetFailed": "数据库重置失败"
+  "debugResetFailed": "数据库重置失败",
+
+  "updateDialogTitle": "发现新版本：{version}",
+  "@updateDialogTitle": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "btnIgnore": "忽略",
+  "btnUpdate": "更新",
+  "checkingUpdate": "正在检查更新...",
+  "alreadyLatestVersion": "已经是最新版本",
+  "checkUpdateFailed": "检查更新失败：{error}",
+  "@checkUpdateFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "settingsCheckUpdate": "检查更新"
 }

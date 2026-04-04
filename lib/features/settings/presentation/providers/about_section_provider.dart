@@ -20,10 +20,14 @@ final imageSaveUseCaseProvider = Provider<ImageSaveUseCase>((ref) {
 
 /// 关于分区状态 Notifier（MVI Intent 处理器）
 /// 管理二维码保存的异步状态
-class AboutSectionNotifier extends StateNotifier<QrCodeSaveStatus> {
-  final ImageSaveUseCase _useCase;
+class AboutSectionNotifier extends Notifier<QrCodeSaveStatus> {
+  late ImageSaveUseCase _useCase;
 
-  AboutSectionNotifier(this._useCase) : super(QrCodeSaveStatus.idle);
+  @override
+  QrCodeSaveStatus build() {
+    _useCase = ref.watch(imageSaveUseCaseProvider);
+    return QrCodeSaveStatus.idle;
+  }
 
   /// Intent: 保存二维码到相册
   Future<void> saveQrCode() async {
@@ -44,6 +48,6 @@ class AboutSectionNotifier extends StateNotifier<QrCodeSaveStatus> {
 
 /// 关于分区状态 Provider
 final aboutSectionProvider =
-    StateNotifierProvider<AboutSectionNotifier, QrCodeSaveStatus>((ref) {
-      return AboutSectionNotifier(ref.watch(imageSaveUseCaseProvider));
-    });
+    NotifierProvider<AboutSectionNotifier, QrCodeSaveStatus>(
+      AboutSectionNotifier.new,
+    );

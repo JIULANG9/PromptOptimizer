@@ -32,6 +32,17 @@ class AppSettings {
     this.locale = 'zh',
   });
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AppSettings &&
+        other.themeMode == themeMode &&
+        other.locale == locale;
+  }
+
+  @override
+  int get hashCode => Object.hash(themeMode, locale);
+
   /// 创建副本并覆盖指定字段
   AppSettings copyWith({ThemeModeSetting? themeMode, String? locale}) {
     return AppSettings(

@@ -7,7 +7,7 @@ This file provides guidance to agents when working with code in this repository.
 
 ## 技术栈
 - **框架**: Flutter 3.10+
-- **状态管理**: Riverpod (flutter_riverpod)
+- **状态管理**: Riverpod 3.x (flutter_riverpod ^3.3.1)
 - **路由**: go_router
 - **数据库**: Drift (SQLite) + Hive (KV存储)
 - **网络**: dio
@@ -71,8 +71,13 @@ lib/
 - 数据库迁移在 [`app_database.dart`](lib/database/app_database.dart:35) 中定义
 - 新增字段使用 `m.addColumn`，删除字段使用 `customStatement('ALTER TABLE ...')`
 
-### 3. 状态管理（Riverpod）
-- Notifier 类负责业务逻辑和状态更新（MVI 中的 Intent 处理器）
+### 3. 状态管理（Riverpod 3.x）
+- 所有 Notifier 继承 `Notifier<State>` 或 `AsyncNotifier<State>`，**禁止使用已移除的 `StateNotifier`**
+- 依赖项在 `build()` 方法中通过 `ref.watch()` 获取，不通过构造函数传入
+- 资源清理通过 `ref.onDispose()` 注册回调（替代 `dispose()` 方法）
+- 全局持久 Provider 在 `build()` 中调用 `ref.keepAlive()` 防止自动暂停
+- 高频更新场景（如流式优化、计时器）使用 `select()` 精细化监听
+- `@freezed` 类必须声明为 `abstract class`（freezed 3.x 要求）
 - Provider 定义遵循就近原则，与使用者放在同一目录
 - 依赖注入通过 `ProviderScope.overrides` 实现（见 [`main.dart`](lib/main.dart:54)）
 

@@ -33,12 +33,14 @@ final dataTransferUseCasesProvider = Provider<DataTransferUseCases>((ref) {
 
 /// 数据传输状态 Notifier（MVI Intent 处理器）
 /// 管理导入导出的异步状态，导入成功后刷新所有相关 Provider
-class DataTransferNotifier extends StateNotifier<DataTransferStatus> {
-  final DataTransferUseCases _useCases;
-  final Ref _ref;
+class DataTransferNotifier extends Notifier<DataTransferStatus> {
+  late DataTransferUseCases _useCases;
 
-  DataTransferNotifier(this._useCases, this._ref)
-    : super(DataTransferStatus.idle);
+  @override
+  DataTransferStatus build() {
+    _useCases = ref.watch(dataTransferUseCasesProvider);
+    return DataTransferStatus.idle;
+  }
 
   /// Intent: 导出数据
   Future<void> exportData() async {
@@ -60,10 +62,10 @@ class DataTransferNotifier extends StateNotifier<DataTransferStatus> {
       final success = await _useCases.importData();
       if (success) {
         // 刷新所有相关 Provider，确保 UI 数据同步
-        _ref.invalidate(apiConfigListProvider);
-        _ref.invalidate(templateListProvider);
-        _ref.invalidate(historyListProvider);
-        _ref.invalidate(optimizationProvider);
+        ref.invalidate(apiConfigListProvider);
+        ref.invalidate(templateListProvider);
+        ref.invalidate(historyListProvider);
+        ref.invalidate(optimizationProvider);
       }
       state = DataTransferStatus.idle;
       return success;
@@ -76,6 +78,7 @@ class DataTransferNotifier extends StateNotifier<DataTransferStatus> {
 
 /// 数据传输状态 Provider
 final dataTransferProvider =
-    StateNotifierProvider<DataTransferNotifier, DataTransferStatus>((ref) {
-      return DataTransferNotifier(ref.watch(dataTransferUseCasesProvider), ref);
-    }, dependencies: [dataTransferUseCasesProvider]);
+    NotifierProvider<DataTransferNotifier, DataTransferStatus>(
+      DataTransferNotifier.new,
+      dependencies: [dataTransferUseCasesProvider],
+    );

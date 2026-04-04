@@ -103,10 +103,19 @@ class _OptimizationTimerDisplayState
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(optimizationProvider);
+    // T3.4: select() 优化——仅监听计时器相关字段，避免其它字段变化触发重建
+    final (:startTime, :networkResponseTime, :currentDuration) = ref.watch(
+      optimizationProvider.select(
+        (s) => (
+          startTime: s.startTime,
+          networkResponseTime: s.networkResponseTime,
+          currentDuration: s.currentDuration,
+        ),
+      ),
+    );
 
     // 只要优化流程启动过，就显示计时器，直到被清除
-    if (state.startTime == null) {
+    if (startTime == null) {
       return const SizedBox.shrink();
     }
 
@@ -119,9 +128,9 @@ class _OptimizationTimerDisplayState
     );
     final boldTextStyle = textStyle.copyWith(fontWeight: FontWeight.bold);
 
-    final networkDuration = state.networkResponseTime != null
-        ? state.networkResponseTime!.difference(state.startTime!)
-        : state.currentDuration;
+    final networkDuration = networkResponseTime != null
+        ? networkResponseTime.difference(startTime)
+        : currentDuration;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -153,7 +162,7 @@ class _OptimizationTimerDisplayState
                         child: Padding(
                           padding: EdgeInsets.only(left: widget.fontSize * 3),
                           child: Text(
-                            _formatDuration(state.currentDuration),
+                            _formatDuration(currentDuration),
                             style: boldTextStyle,
                           ),
                         ),

@@ -34,19 +34,21 @@ class AppInitState {
   }
 }
 
-class AppInitNotifier extends StateNotifier<AppInitState> {
-  final Future<AppBootstrapResult>? _preInitFuture;
-
-  AppInitNotifier(this._preInitFuture) : super(const AppInitState()) {
-    _initialize();
+class AppInitNotifier extends Notifier<AppInitState> {
+  @override
+  AppInitState build() {
+    final preInitFuture = ref.watch(bootstrapResultFutureProvider);
+    // 异步初始化在 build 之后触发，避免在 build 内 await
+    Future.microtask(() => _initialize(preInitFuture));
+    return const AppInitState();
   }
 
-  Future<void> _initialize() async {
+  Future<void> _initialize(Future<AppBootstrapResult>? preInitFuture) async {
     state = state.copyWith(status: AppInitStatus.loading, clearError: true);
     try {
       // 如果有预初始化的 Future，直接使用，否则创建新的
-      final result = _preInitFuture != null 
-          ? await _preInitFuture 
+      final result = preInitFuture != null
+          ? await preInitFuture
           : await AppBootstrapper().bootstrap();
       state = state.copyWith(status: AppInitStatus.ready, result: result);
     } catch (e) {
@@ -60,7 +62,6 @@ final bootstrapResultFutureProvider = Provider<Future<AppBootstrapResult>?>((ref
   return null;
 });
 
-final appInitProvider = StateNotifierProvider<AppInitNotifier, AppInitState>((ref) {
-  final preInitFuture = ref.watch(bootstrapResultFutureProvider);
-  return AppInitNotifier(preInitFuture);
-});
+final appInitProvider = NotifierProvider<AppInitNotifier, AppInitState>(
+  AppInitNotifier.new,
+);

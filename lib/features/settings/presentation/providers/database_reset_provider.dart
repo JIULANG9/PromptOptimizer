@@ -7,13 +7,14 @@ import '../../../../database/seed/database_seeder.dart';
 
 /// 数据库重置提供者
 final databaseResetProvider =
-    StateNotifierProvider<DatabaseResetNotifier, AsyncValue<void>>((ref) {
-  return DatabaseResetNotifier();
-});
+    NotifierProvider<DatabaseResetNotifier, AsyncValue<void>>(
+      DatabaseResetNotifier.new,
+    );
 
 /// 数据库重置 Notifier
-class DatabaseResetNotifier extends StateNotifier<AsyncValue<void>> {
-  DatabaseResetNotifier() : super(const AsyncValue.data(null));
+class DatabaseResetNotifier extends Notifier<AsyncValue<void>> {
+  @override
+  AsyncValue<void> build() => const AsyncValue.data(null);
 
   /// 重置所有数据库（Hive + SQLite）
   Future<void> resetAllDatabases() async {

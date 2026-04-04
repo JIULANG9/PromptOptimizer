@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../database/daos/template_dao.dart';
@@ -20,6 +21,19 @@ class TemplateListState {
     this.errorMessage,
   });
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is TemplateListState &&
+        listEquals(other.templates, templates) &&
+        other.isLoading == isLoading &&
+        other.filterType == filterType &&
+        other.errorMessage == errorMessage;
+  }
+
+  @override
+  int get hashCode => Object.hash(Object.hashAll(templates), isLoading, filterType, errorMessage);
+
   TemplateListState copyWith({
     List<TemplateEntity>? templates,
     bool? isLoading,
@@ -37,11 +51,14 @@ class TemplateListState {
 }
 
 /// 模板列表 Notifier（MVI Intent 处理器）
-class TemplateListNotifier extends StateNotifier<TemplateListState> {
-  final TemplateUseCases _useCases;
+class TemplateListNotifier extends Notifier<TemplateListState> {
+  late TemplateUseCases _useCases;
 
-  TemplateListNotifier(this._useCases) : super(const TemplateListState()) {
-    loadTemplates();
+  @override
+  TemplateListState build() {
+    _useCases = ref.watch(templateUseCasesProvider);
+    Future.microtask(() => loadTemplates());
+    return const TemplateListState();
   }
 
   /// Intent: 加载所有模板
@@ -115,6 +132,7 @@ final templateUseCasesProvider = Provider<TemplateUseCases>((ref) {
 
 /// 模板列表状态 Provider
 final templateListProvider =
-    StateNotifierProvider<TemplateListNotifier, TemplateListState>((ref) {
-      return TemplateListNotifier(ref.watch(templateUseCasesProvider));
-    }, dependencies: [templateUseCasesProvider]);
+    NotifierProvider<TemplateListNotifier, TemplateListState>(
+      TemplateListNotifier.new,
+      dependencies: [templateUseCasesProvider],
+    );

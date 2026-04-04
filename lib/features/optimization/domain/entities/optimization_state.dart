@@ -57,6 +57,36 @@ class OptimizationState {
   /// 是否有结果可展示
   bool get hasResult => optimizedPrompt.isNotEmpty;
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is OptimizationState &&
+        other.status == status &&
+        other.originalPrompt == originalPrompt &&
+        other.optimizedPrompt == optimizedPrompt &&
+        other.errorMessage == errorMessage &&
+        other.currentTab == currentTab &&
+        other.selectedApiConfigId == selectedApiConfigId &&
+        other.selectedTemplateId == selectedTemplateId &&
+        other.startTime == startTime &&
+        other.networkResponseTime == networkResponseTime &&
+        other.currentDuration == currentDuration;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        status,
+        originalPrompt,
+        optimizedPrompt,
+        errorMessage,
+        currentTab,
+        selectedApiConfigId,
+        selectedTemplateId,
+        startTime,
+        networkResponseTime,
+        currentDuration,
+      );
+
   /// 创建副本并覆盖指定字段
   OptimizationState copyWith({
     OptimizationStatus? status,

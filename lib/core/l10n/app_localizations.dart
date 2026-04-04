@@ -1207,6 +1207,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Database reset failed'**
   String get debugResetFailed;
+
+  /// No description provided for @updateDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Version Available: {version}'**
+  String updateDialogTitle(String version);
+
+  /// No description provided for @btnIgnore.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore'**
+  String get btnIgnore;
+
+  /// No description provided for @btnUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get btnUpdate;
+
+  /// No description provided for @checkingUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking for updates...'**
+  String get checkingUpdate;
+
+  /// No description provided for @alreadyLatestVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Already the latest version'**
+  String get alreadyLatestVersion;
+
+  /// No description provided for @checkUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Update check failed: {error}'**
+  String checkUpdateFailed(String error);
+
+  /// No description provided for @settingsCheckUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for Updates'**
+  String get settingsCheckUpdate;
 }
 
 class _AppLocalizationsDelegate

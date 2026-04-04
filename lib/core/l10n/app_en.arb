@@ -231,5 +231,23 @@
   "debugResetConfirmTitle": "Confirm Reset",
   "debugResetConfirmMessage": "This will clear all data (API configs, templates, history, etc.) and restore defaults. Continue?",
   "debugResetSuccess": "Database reset successfully",
-  "debugResetFailed": "Database reset failed"
+  "debugResetFailed": "Database reset failed",
+
+  "updateDialogTitle": "New Version Available: {version}",
+  "@updateDialogTitle": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "btnIgnore": "Ignore",
+  "btnUpdate": "Update",
+  "checkingUpdate": "Checking for updates...",
+  "alreadyLatestVersion": "Already the latest version",
+  "checkUpdateFailed": "Update check failed: {error}",
+  "@checkUpdateFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "settingsCheckUpdate": "Check for Updates"
 }

@@ -18,6 +18,9 @@ import '../widgets/prompt_tab_bar.dart';
 import '../widgets/result_panel.dart';
 import '../widgets/onboarding_bottom_sheet.dart';
 import '../../../widgets/animation/delayed_entrance.dart';
+import '../../../settings/presentation/providers/version_check_provider.dart';
+import '../../../widgets/dialogs/animated_dialog.dart';
+import '../../../widgets/dialogs/update_dialog.dart';
 
 /// 首页 — 应用主界面
 /// 响应式布局：桌面端双栏（左输入 + 右结果），移动端单栏 + 结果页
@@ -51,9 +54,10 @@ class _HomePageState extends ConsumerState<HomePage>
     // 页面首次进入时自动触发,仅播放一次
     _entranceController.forward();
     
-    // 延迟显示引导弹窗
+    // 延迟显示引导弹窗和检查版本更新
     WidgetsBinding.instance.addPostFrameCallback((_) {
       OnboardingBottomSheet.showIfNeeded(context);
+      _checkVersionUpdate();
     });
   }
 
@@ -69,10 +73,29 @@ class _HomePageState extends ConsumerState<HomePage>
     return (index * _staggerDelayMs / _totalDurationMs).clamp(0.0, 0.99);
   }
 
+  /// 检查版本更新
+  void _checkVersionUpdate() {
+    ref.read(versionCheckProvider.notifier).checkVersion(
+      triggeredBy: VersionCheckTrigger.auto,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final optState = ref.watch(optimizationProvider);
+
+    // 监听版本检查状态 - 只响应自动检查触发的更新
+    ref.listen<VersionCheckState>(versionCheckProvider, (prev, next) {
+      if (next.triggeredBy == VersionCheckTrigger.auto &&
+          next.status == VersionCheckStatus.hasUpdate &&
+          next.versionInfo != null) {
+        showAnimatedDialog(
+          context: context,
+          builder: (ctx) => UpdateDialog(versionInfo: next.versionInfo!),
+        );
+      }
+    });
 
     // 全局监听：优化完成后 toast 提示 + 移动端流式开始时跳转结果页
     ref.listen<OptimizationState>(optimizationProvider, (prev, next) {

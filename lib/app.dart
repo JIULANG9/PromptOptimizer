@@ -16,12 +16,16 @@ class PromptOptimizerApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 监听 state 变化以触发 rebuild（主题/语言切换）
-    final appSettings = ref.watch(settingsProvider);
+    // T3.4: select() 优化——仅监听主题和语言字段，避免其他设置变化触发根 Widget 重建
+    final (:themeModeSetting, :locale) = ref.watch(
+      settingsProvider.select(
+        (s) => (themeModeSetting: s.themeMode, locale: s.locale),
+      ),
+    );
 
     // 直接从 state 计算 ThemeMode 和 Locale
     final ThemeMode themeMode;
-    switch (appSettings.themeMode) {
+    switch (themeModeSetting) {
       case ThemeModeSetting.light:
         themeMode = ThemeMode.light;
       case ThemeModeSetting.dark:
@@ -40,7 +44,7 @@ class PromptOptimizerApp extends ConsumerWidget {
       themeMode: themeMode,
 
       // 国际化
-      locale: Locale(appSettings.locale),
+      locale: Locale(locale),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
 

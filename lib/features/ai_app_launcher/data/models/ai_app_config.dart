@@ -9,7 +9,7 @@ part 'ai_app_config.g.dart';
 
 /// AI 应用配置数据模型
 @freezed
-class AIAppConfigModel with _$AIAppConfigModel {
+abstract class AIAppConfigModel with _$AIAppConfigModel {
   const factory AIAppConfigModel({
     required String id,
     required String name,

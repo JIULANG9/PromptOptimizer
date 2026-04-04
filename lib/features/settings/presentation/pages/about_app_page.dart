@@ -10,6 +10,9 @@ import '../../../widgets/glass/glass_widgets.dart';
 import '../../../widgets/item/ripple_list_tile.dart';
 import '../../../widgets/toast/toast_controller.dart';
 import '../providers/version_provider.dart';
+import '../providers/version_check_provider.dart';
+import '../../../widgets/dialogs/animated_dialog.dart';
+import '../../../widgets/dialogs/update_dialog.dart';
 
 /// 关于应用页面
 class AboutAppPage extends ConsumerWidget {
@@ -19,6 +22,29 @@ class AboutAppPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+
+    // 监听版本检查状态 - 只响应手动检查触发的更新
+    ref.listen<VersionCheckState>(versionCheckProvider, (prev, next) {
+      if (next.triggeredBy == VersionCheckTrigger.manual &&
+          prev?.status == VersionCheckStatus.loading &&
+          next.status == VersionCheckStatus.hasUpdate &&
+          next.versionInfo != null) {
+        showAnimatedDialog(
+          context: context,
+          builder: (ctx) => UpdateDialog(versionInfo: next.versionInfo!),
+        );
+      } else if (next.triggeredBy == VersionCheckTrigger.manual &&
+          prev?.status == VersionCheckStatus.loading &&
+          next.status == VersionCheckStatus.noUpdate) {
+        ref.read(toastProvider.notifier).showInfo(l10n.alreadyLatestVersion);
+      } else if (next.triggeredBy == VersionCheckTrigger.manual &&
+          prev?.status == VersionCheckStatus.loading &&
+          next.status == VersionCheckStatus.error) {
+        ref.read(toastProvider.notifier).showError(
+          l10n.checkUpdateFailed(next.errorMessage),
+        );
+      }
+    });
 
     return GlassScaffold(
       appBar: AppBar(title: Text(l10n.aboutAppTitle)),
@@ -205,6 +231,20 @@ class AboutAppPage extends ConsumerWidget {
 
           const SizedBox(height: 16),
 
+          // ─── 检查更新 ───
+          RippleSection(
+            children: [
+              RippleListTile(
+                leading: const Icon(Icons.system_update_outlined),
+                title: l10n.settingsCheckUpdate,
+                showArrow: true,
+                onTap: () => _handleCheckUpdate(ref),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
           // ─── 政策链接 ───
           RippleSection(
             children: [
@@ -253,6 +293,14 @@ class AboutAppPage extends ConsumerWidget {
     } catch (e) {
       // 如果无法打开链接，忽略错误
     }
+  }
+
+  /// 处理检查更新
+  void _handleCheckUpdate(WidgetRef ref) {
+    ref.read(versionCheckProvider.notifier).checkVersion(
+      forceCheck: true,
+      triggeredBy: VersionCheckTrigger.manual,
+    );
   }
 }
 

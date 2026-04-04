@@ -9,12 +9,14 @@ class AppBootstrapResult {
   final Box settingsBox;
   final Box aiAppLauncherBox;
   final Box<bool> aiAppEnabledStatesBox;
+  final Box versionUpdateBox;
   final AppDatabase database;
 
   const AppBootstrapResult({
     required this.settingsBox,
     required this.aiAppLauncherBox,
     required this.aiAppEnabledStatesBox,
+    required this.versionUpdateBox,
     required this.database,
   });
 }
@@ -24,6 +26,7 @@ class AppBootstrapper {
     final settingsBox = await openSettingsBox(AppConstants.settingsBoxName);
     final aiAppLauncherBox = await openSettingsBox(AppConstants.aiAppLauncherBoxName);
     final aiAppEnabledStatesBox = await Hive.openBox<bool>('ai_app_enabled_states');
+    final versionUpdateBox = await openSettingsBox(AppConstants.versionUpdateBoxName);
 
     final database = AppDatabase();
 
@@ -34,6 +37,7 @@ class AppBootstrapper {
       settingsBox: settingsBox,
       aiAppLauncherBox: aiAppLauncherBox,
       aiAppEnabledStatesBox: aiAppEnabledStatesBox,
+      versionUpdateBox: versionUpdateBox,
       database: database,
     );
   }

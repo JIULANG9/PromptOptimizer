@@ -6,4 +6,15 @@ part of 'history_dao.dart';
 mixin _$HistoryDaoMixin on DatabaseAccessor<AppDatabase> {
   $OptimizationHistoriesTable get optimizationHistories =>
       attachedDatabase.optimizationHistories;
+  HistoryDaoManager get managers => HistoryDaoManager(this);
+}
+
+class HistoryDaoManager {
+  final _$HistoryDaoMixin _db;
+  HistoryDaoManager(this._db);
+  $$OptimizationHistoriesTableTableManager get optimizationHistories =>
+      $$OptimizationHistoriesTableTableManager(
+        _db.attachedDatabase,
+        _db.optimizationHistories,
+      );
 }
