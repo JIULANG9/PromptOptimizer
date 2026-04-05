@@ -13,8 +13,8 @@ permissions:
   actions: read
 
 env:
-  FLUTTER_VERSION: '3.38.9'  # 使用稳定版本
-  DART_VERSION: '3.10.8'  # 与项目要求 ^3.10.3 兼容
+  FLUTTER_VERSION: '3.41.6'  # 使用最新稳定版本
+  DART_VERSION: '3.11.4'  # 与项目要求 ^3.11.0 兼容
   JAVA_VERSION: '17'
 
 jobs:

@@ -21,8 +21,8 @@ on:
           - web
 
 env:
-  FLUTTER_VERSION: '3.38.9'
-  DART_VERSION: '3.10.8'
+  FLUTTER_VERSION: '3.41.6'
+  DART_VERSION: '3.11.4'
 
 jobs:
   build:
