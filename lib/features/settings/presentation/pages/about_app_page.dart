@@ -232,16 +232,7 @@ class AboutAppPage extends ConsumerWidget {
           const SizedBox(height: 16),
 
           // ─── 检查更新 ───
-          RippleSection(
-            children: [
-              RippleListTile(
-                leading: const Icon(Icons.system_update_outlined),
-                title: l10n.settingsCheckUpdate,
-                showArrow: true,
-                onTap: () => _handleCheckUpdate(ref),
-              ),
-            ],
-          ),
+          _buildUpdateSection(context, ref, l10n),
 
           const SizedBox(height: 16),
 
@@ -300,6 +291,51 @@ class AboutAppPage extends ConsumerWidget {
     ref.read(versionCheckProvider.notifier).checkVersion(
       forceCheck: true,
       triggeredBy: VersionCheckTrigger.manual,
+    );
+  }
+
+  /// 构建检查更新区域，包含忽略状态显示
+  Widget _buildUpdateSection(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    final ignoredInfo = ref.read(versionCheckProvider.notifier).getIgnoredUpdateInfo();
+
+    return RippleSection(
+      children: [
+        RippleListTile(
+          leading: const Icon(Icons.system_update_outlined),
+          title: l10n.settingsCheckUpdate,
+          showArrow: true,
+          onTap: () => _handleCheckUpdate(ref),
+        ),
+        if (ignoredInfo != null) ...[
+          const Divider(height: 1, indent: 16, endIndent: 16),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.snooze_outlined,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.updateIgnoredStatus(
+                      ignoredInfo.$1.toString(),
+                      ignoredInfo.$2,
+                    ),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

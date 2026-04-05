@@ -203,6 +203,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsContactWeChatId => 'ISSWENJIE';
 
   @override
+  String get settingsCheckUpdate => '检查更新';
+
+  @override
   String get toastCopiedEmail => '邮箱已复制到剪贴板';
 
   @override
@@ -586,6 +589,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get btnIgnore => '忽略';
 
   @override
+  String get btnIgnoreThreeDays => '3天内不再提醒';
+
+  @override
   String get btnUpdate => '更新';
 
   @override
@@ -600,5 +606,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get settingsCheckUpdate => '检查更新';
+  String updateIgnoredStatus(String version, int days) {
+    return '已忽略 v$version 更新，$days 天后恢复提醒';
+  }
 }

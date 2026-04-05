@@ -156,6 +156,25 @@ class VersionCheckNotifier extends Notifier<VersionCheckState> {
     final elapsed = now - ignoreTimestamp;
     return elapsed < AppConstants.updateIgnoreDuration;
   }
+
+  /// 获取当前忽略的更新信息，返回 (versionCode, remainingDays)
+  /// 如果没有正在忽略的更新，返回 null
+  (int versionCode, int remainingDays)? getIgnoredUpdateInfo() {
+    final ignoreTimestamp = _box.get(AppConstants.updateIgnoreTimestampKey) as int?;
+    final ignoredVersion = _box.get(AppConstants.updateIgnoredVersionKey) as int?;
+
+    if (ignoreTimestamp == null || ignoredVersion == null) return null;
+
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final elapsed = now - ignoreTimestamp;
+
+    if (elapsed >= AppConstants.updateIgnoreDuration) return null;
+
+    final remainingMs = AppConstants.updateIgnoreDuration - elapsed;
+    final remainingDays = (remainingMs / (24 * 60 * 60 * 1000)).ceil();
+
+    return (ignoredVersion, remainingDays);
+  }
 }
 
 final versionRepositoryProvider = Provider<VersionRepository>((ref) {

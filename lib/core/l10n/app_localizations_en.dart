@@ -204,6 +204,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsContactWeChatId => 'ISSWENJIE';
 
   @override
+  String get settingsCheckUpdate => 'Check for Updates';
+
+  @override
   String get toastCopiedEmail => 'Email copied to clipboard';
 
   @override
@@ -601,6 +604,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btnIgnore => 'Ignore';
 
   @override
+  String get btnIgnoreThreeDays => 'Remind me in 3 days';
+
+  @override
   String get btnUpdate => 'Update';
 
   @override
@@ -615,5 +621,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsCheckUpdate => 'Check for Updates';
+  String updateIgnoredStatus(String version, int days) {
+    return 'Version $version ignored, $days days remaining';
+  }
 }

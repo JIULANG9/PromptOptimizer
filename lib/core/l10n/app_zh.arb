@@ -73,6 +73,7 @@
   "settingsContactWeChat": "微信",
   "settingsContactEmailAddress": "2021662556@qq.com",
   "settingsContactWeChatId": "ISSWENJIE",
+  "settingsCheckUpdate": "检查更新",
   "toastCopiedEmail": "邮箱已复制到剪贴板",
   "toastCopiedWeChat": "微信号已复制到剪贴板",
   "toastCopiedVersion": "版本号已复制到剪贴板",
@@ -240,6 +241,7 @@
     }
   },
   "btnIgnore": "忽略",
+  "btnIgnoreThreeDays": "3天内不再提醒",
   "btnUpdate": "更新",
   "checkingUpdate": "正在检查更新...",
   "alreadyLatestVersion": "已经是最新版本",
@@ -249,5 +251,11 @@
       "error": { "type": "String" }
     }
   },
-  "settingsCheckUpdate": "检查更新"
+  "updateIgnoredStatus": "已忽略 v{version} 更新，{days} 天后恢复提醒",
+  "@updateIgnoredStatus": {
+    "placeholders": {
+      "version": { "type": "String" },
+      "days": { "type": "int" }
+    }
+  }
 }

@@ -482,6 +482,12 @@ abstract class AppLocalizations {
   /// **'ISSWENJIE'**
   String get settingsContactWeChatId;
 
+  /// No description provided for @settingsCheckUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for Updates'**
+  String get settingsCheckUpdate;
+
   /// No description provided for @toastCopiedEmail.
   ///
   /// In en, this message translates to:
@@ -1220,6 +1226,12 @@ abstract class AppLocalizations {
   /// **'Ignore'**
   String get btnIgnore;
 
+  /// No description provided for @btnIgnoreThreeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me in 3 days'**
+  String get btnIgnoreThreeDays;
+
   /// No description provided for @btnUpdate.
   ///
   /// In en, this message translates to:
@@ -1244,11 +1256,11 @@ abstract class AppLocalizations {
   /// **'Update check failed: {error}'**
   String checkUpdateFailed(String error);
 
-  /// No description provided for @settingsCheckUpdate.
+  /// No description provided for @updateIgnoredStatus.
   ///
   /// In en, this message translates to:
-  /// **'Check for Updates'**
-  String get settingsCheckUpdate;
+  /// **'Version {version} ignored, {days} days remaining'**
+  String updateIgnoredStatus(String version, int days);
 }
 
 class _AppLocalizationsDelegate

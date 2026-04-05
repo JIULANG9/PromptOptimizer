@@ -73,7 +73,7 @@ class UpdateDialog extends ConsumerWidget {
                         children: [
                           TextButton(
                             onPressed: () => _handleIgnore(context, ref),
-                            child: Text(l10n.btnIgnore),
+                            child: Text(l10n.btnIgnoreThreeDays),
                           ),
                           const SizedBox(width: 12),
                           FilledButton(
