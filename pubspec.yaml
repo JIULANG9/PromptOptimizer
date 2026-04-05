@@ -63,6 +63,18 @@ dev_dependencies:
   json_serializable: ^6.9.4
   # 应用图标生成
   flutter_launcher_icons: ^0.14.3
+  # 测试相关依赖覆盖
+  analyzer: ^10.0.0
+  test_api: ^0.7.7
+  test: ^1.25.9
+
+dependency_overrides:
+  # 强制统一 analyzer 版本，解决与 freezed 的冲突
+  analyzer: ^10.0.0
+  # 强制统一 test_api 版本，与 flutter_test 保持一致
+  test_api: ^0.7.7
+  # 强制 test 版本与 test_api 0.7.7 兼容
+  test: ^1.25.9
 
 flutter_launcher_icons:
   android: true
